@@ -1,0 +1,355 @@
+---
+interface Props {
+  src?: string;
+  sampleStep?: number;
+  mode?: 'tube' | 'logo';
+}
+const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
+---
+
+<div class="logo-dots" data-src={src} data-step={sampleStep} data-mode={mode}>
+  <canvas></canvas>
+</div>
+
+<style>
+  .logo-dots { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  .logo-dots canvas { display: block; width: 100%; height: 100%; }
+</style>
+
+<script>
+  import * as THREE from 'three';
+  import { gsap } from 'gsap';
+
+  // === OG constants — verbatim from main.min.js ===
+  const Li = 0.01, ji = 0.015, Ni = 0.02;
+  const Hi = { x: 0, y: 0, z: 50 };
+  const $i = 60;
+  const Di = {
+    radius: 1.5, tubularSegments: 60, radialSegments: 60, arcHeight: 0, arcLength: 22,
+    position:       { x: 4.9, y: -1.6, z: 36 },
+    rotation:       { x: 0,   y: -117, z: 11 },
+    mobilePosition: { x: 4.9, y: -1.6, z: 34 },
+    mobileRotation: { x: 0,   y: -117, z: 11 },
+  };
+  // Fi = dot color — pale tint of brand blue #1745ce, matching OG green's lightness/saturation.
+  // Vi = scene bg + fog color — near-black with subtle blue undertone (cooler than OG #111111).
+  const Fi = 0x7c9dff, Wi = 0.4, Bi = 170, qi = 0, Ui = 15, Vi = 0x0a0e1a;
+
+  // OG Xi / Gi / Ki helpers — verbatim
+  function Xi(t: number, e: number, n: number, i: boolean) {
+    const r = i ? Math.cos : Math.sin;
+    return 0.5 * Math.sin(r(t + e * n) * Math.PI);
+  }
+  function Gi(t: number, e: number, n: number, i: number) {
+    return {
+      x: Xi(t, e, Li, false),
+      y: Xi(t, n, ji, true),
+      z: Xi(t, i, Ni, false),
+    };
+  }
+  function Ki(
+    out: Float32Array, idx: number,
+    orig: Float32Array,
+    off: { x: number; y: number; z: number },
+    intensity: number,
+    deflection: Float32Array,
+    isTouch: boolean,
+  ) {
+    out[idx]     = orig[idx]     + off.x * intensity + (isTouch ? 0 : deflection[idx]);
+    out[idx + 1] = orig[idx + 1] + off.y * intensity + (isTouch ? 0 : deflection[idx + 1]);
+    out[idx + 2] = orig[idx + 2] + off.z * intensity + (isTouch ? 0 : deflection[idx + 2]);
+  }
+
+  const deg = (d: number) => (d * Math.PI) / 180;
+
+  type DotsRoot = HTMLElement & { __disposed?: boolean };
+
+  // Build geometry — either OG tube or logo sampled from SVG
+  async function buildTubeGeometry(): Promise<{ positions: Float32Array; count: number }> {
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(-Di.arcLength / 2, 0, 0),
+      new THREE.Vector3(0, Di.arcHeight, 0),
+      new THREE.Vector3(Di.arcLength / 2, 0, 0),
+    );
+    const tube = new THREE.TubeGeometry(curve, Di.tubularSegments, Di.radius, Di.radialSegments, false);
+    const positions = (tube.attributes.position.array as Float32Array).slice();
+    tube.dispose();
+    return { positions, count: positions.length / 3 };
+  }
+
+  async function buildLogoGeometry(svgUrl: string, step: number) {
+    const res = await fetch(svgUrl);
+    const svgText = await res.text();
+    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+    await img.decode();
+
+    const rasterSize = 512;
+    const off = document.createElement('canvas');
+    off.width = rasterSize;
+    off.height = rasterSize;
+    const ctx = off.getContext('2d', { willReadFrequently: true })!;
+    const scale = Math.min(rasterSize / img.width, rasterSize / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    ctx.drawImage(img, (rasterSize - w) / 2, (rasterSize - h) / 2, w, h);
+    URL.revokeObjectURL(url);
+
+    const { data } = ctx.getImageData(0, 0, rasterSize, rasterSize);
+    const pixels: Array<[number, number]> = [];
+    for (let y = 0; y < rasterSize; y += step) {
+      for (let x = 0; x < rasterSize; x += step) {
+        if (data[(y * rasterSize + x) * 4 + 3] > 128) pixels.push([x, y]);
+      }
+    }
+    if (!pixels.length) throw new Error('No pixels sampled');
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const [x, y] of pixels) {
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
+    }
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    const pxToWorld = (Di.arcLength * 0.35) / Math.max(maxX - minX, maxY - minY);
+
+    const positions = new Float32Array(pixels.length * 3);
+    for (let i = 0; i < pixels.length; i++) {
+      const [px, py] = pixels[i];
+      positions[i * 3]     = (px - cx) * pxToWorld;
+      positions[i * 3 + 1] = -(py - cy) * pxToWorld;
+      positions[i * 3 + 2] = 0;
+    }
+    return { positions, count: pixels.length };
+  }
+
+  function makeMaterial() {
+    return new THREE.ShaderMaterial({
+      uniforms: THREE.UniformsUtils.merge([
+        THREE.UniformsLib.fog,
+        {
+          color: { value: new THREE.Color(Fi) },
+          size: { value: Wi },
+          sizeAttenuation: { value: Bi },
+        },
+      ]),
+      vertexShader: `
+        uniform float size;
+        uniform float sizeAttenuation;
+        #include <fog_pars_vertex>
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * (sizeAttenuation / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+          #include <fog_vertex>
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 color;
+        #include <fog_pars_fragment>
+        void main() {
+          vec2 center = gl_PointCoord - vec2(0.5);
+          if (dot(center, center) > 0.25) discard;
+          gl_FragColor = vec4(color, 1.0);
+          #include <fog_fragment>
+        }
+      `,
+      fog: true,
+      transparent: false,
+    });
+  }
+
+  async function init(root: DotsRoot) {
+    const canvas = root.querySelector('canvas') as HTMLCanvasElement;
+    const src = root.dataset.src!;
+    const step = Number(root.dataset.step) || 4;
+    const mode = root.dataset.mode || 'logo';
+
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Scene setup — matches OG tr()
+    const renderer = new THREE.WebGLRenderer({
+      canvas, antialias: false, powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(Vi, 1);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(Vi, qi, Ui);
+
+    const camera = new THREE.PerspectiveCamera($i, 1, 0.1, 1000);
+    camera.position.set(Hi.x, Hi.y, Hi.z);
+
+    const material = makeMaterial();
+    const geometry = new THREE.BufferGeometry();
+    const points = new THREE.Points(geometry, material);
+
+    function applyTransform() {
+      const mobile = window.innerWidth < 768;
+      const p = mobile ? Di.mobilePosition : Di.position;
+      // For the logo, keep OG position but drop the -117° Y rotation (was calibrated for a
+      // horizontal arc, not a square logo — it made the "C" edge-on).
+      // Small tilt keeps the 3D feel without losing readability.
+      if (mode === 'tube') {
+        const r = mobile ? Di.mobileRotation : Di.rotation;
+        points.rotation.set(deg(r.x), deg(r.y), deg(r.z));
+      } else {
+        points.rotation.set(deg(-6), 0, deg(-4));
+      }
+      // Center horizontally and pull closer to camera. OG z=36 worked for the tube because
+      // its arc extended toward the camera (parts at z~45). A flat logo at z=36 sits entirely
+      // inside the fog (far=15, camera at z=50 → dot is 14 units away, almost fully fogged).
+      if (mode === 'tube') {
+        points.position.set(p.x, p.y, p.z);
+      } else {
+        points.position.set(0, 0, 42);
+      }
+    }
+    applyTransform();
+    scene.add(points);
+
+    // Build geometry
+    let geom: { positions: Float32Array; count: number };
+    try {
+      geom = mode === 'tube'
+        ? await buildTubeGeometry()
+        : await buildLogoGeometry(src, step);
+    } catch (err) {
+      console.error('[LogoDots] geometry build failed:', err);
+      return;
+    }
+    if (root.__disposed) return;
+
+    const originalPositions = geom.positions;
+    const livePositions = new Float32Array(originalPositions.length);
+    livePositions.set(originalPositions);
+    geometry.setAttribute('position', new THREE.BufferAttribute(livePositions, 3));
+    (geometry.attributes.position as THREE.BufferAttribute).setUsage(THREE.DynamicDrawUsage);
+    geometry.computeBoundingSphere();
+    console.log('[LogoDots]', mode, geom.count, 'dots');
+
+    // Mouse-deflection buffers — OG Zi()
+    const deflectionTarget = new Float32Array(originalPositions.length);
+    const deflectionCurrent = new Float32Array(originalPositions.length);
+    const mouse = { x: 0, y: 0 };
+    const tmpA = new THREE.Vector3();
+    const tmpB = new THREE.Vector3();
+
+    // OG wave intensity curve: starts huge (30), animates down to 0.02 over 2s, then spatialBlend 0→1
+    let waveIntensity = 30;
+    let spatialBlend = 0;
+    let introComplete = false;
+
+    if (isTouch || prefersReducedMotion) {
+      waveIntensity = 0.02;
+      spatialBlend = isTouch ? 0 : 1;
+      introComplete = true;
+    } else {
+      gsap.to({ v: waveIntensity }, {
+        v: 0.02, duration: 2, ease: 'power3.inOut', delay: 0.5,
+        onUpdate() { waveIntensity = (this.targets()[0] as any).v; },
+        onComplete() {
+          introComplete = true;
+          gsap.to({ v: 0 }, {
+            v: 1, duration: 1.5, ease: 'power2.inOut',
+            onUpdate() { spatialBlend = (this.targets()[0] as any).v; },
+          });
+        },
+      });
+    }
+
+    function onResize() {
+      renderer.setSize(window.innerWidth, window.innerHeight, false);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      applyTransform();
+    }
+    onResize();
+    window.addEventListener('resize', onResize);
+
+    function onMouseMove(e: PointerEvent) {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    }
+    window.addEventListener('pointermove', onMouseMove);
+
+    // Animation loop — mirrors OG updateWavePositions
+    let time = 0;
+    let rafId = 0;
+    const tick = () => {
+      rafId = requestAnimationFrame(tick);
+      time += 0.01;
+
+      // Mouse-driven deflection (only after intro, only desktop)
+      if (introComplete && !isTouch) {
+        points.updateMatrixWorld();
+        const matrix = points.matrixWorld;
+        const canvasW = canvas.width / renderer.getPixelRatio();
+        const canvasH = canvas.height / renderer.getPixelRatio();
+
+        for (let p = 0; p < geom.count; p++) {
+          const f = 3 * p;
+          tmpA.set(originalPositions[f], originalPositions[f + 1], originalPositions[f + 2]);
+          tmpA.applyMatrix4(matrix);
+          tmpB.copy(tmpA).project(camera);
+          const sx = (0.5 * tmpB.x + 0.5) * canvasW;
+          const sy = (0.5 * -tmpB.y + 0.5) * canvasH;
+          const dx = sx - mouse.x;
+          const dy = sy - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 125) {
+            const w = 1 - dist / 125;
+            const a = Math.atan2(dy, dx);
+            deflectionTarget[f]     = -Math.cos(a) * w * 1.5;
+            deflectionTarget[f + 1] = -Math.sin(a) * w * 1.5;
+            deflectionTarget[f + 2] = 1.5 * w * 0.5;
+          } else {
+            deflectionTarget[f] = 0;
+            deflectionTarget[f + 1] = 0;
+            deflectionTarget[f + 2] = 0;
+          }
+          // Smooth lerp
+          deflectionCurrent[f]     += 0.1 * (deflectionTarget[f]     - deflectionCurrent[f]);
+          deflectionCurrent[f + 1] += 0.1 * (deflectionTarget[f + 1] - deflectionCurrent[f + 1]);
+          deflectionCurrent[f + 2] += 0.1 * (deflectionTarget[f + 2] - deflectionCurrent[f + 2]);
+        }
+      }
+
+      // Wave displacement
+      for (let g = 0; g < livePositions.length; g += 3) {
+        const v = originalPositions[g];
+        const y = originalPositions[g + 1];
+        const b = originalPositions[g + 2];
+        const wIdx = Gi(time, g, g, g);
+        const wPos = Gi(time, v, y, b);
+        const blended = {
+          x: wIdx.x * (1 - spatialBlend) + wPos.x * spatialBlend,
+          y: wIdx.y * (1 - spatialBlend) + wPos.y * spatialBlend,
+          z: wIdx.z * (1 - spatialBlend) + wPos.z * spatialBlend,
+        };
+        Ki(livePositions, g, originalPositions, blended, waveIntensity, deflectionCurrent, isTouch);
+      }
+      (geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+      renderer.render(scene, camera);
+    };
+    tick();
+
+    const cleanup = () => {
+      root.__disposed = true;
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('pointermove', onMouseMove);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+    };
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+  }
+
+  document.querySelectorAll<HTMLElement>('.logo-dots').forEach((el) => init(el as DotsRoot));
+</script>
