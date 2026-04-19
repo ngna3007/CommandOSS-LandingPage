@@ -114,7 +114,11 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     }
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
-    const pxToWorld = (Di.arcLength * 0.35) / Math.max(maxX - minX, maxY - minY);
+    // Viewport-responsive scale: smaller on mobile, clamped on ultrawide.
+    // 0.22 at 360px → 0.29 at 1280px → 0.33 at 1920px+
+    const vw = Math.max(320, Math.min(1920, window.innerWidth));
+    const scaleFactor = 0.22 + ((vw - 360) / (1920 - 360)) * 0.11;
+    const pxToWorld = (Di.arcLength * scaleFactor) / Math.max(maxX - minX, maxY - minY);
 
     const positions = new Float32Array(pixels.length * 3);
     for (let i = 0; i < pixels.length; i++) {
@@ -206,7 +210,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       if (mode === 'tube') {
         points.position.set(p.x, p.y, p.z);
       } else {
-        points.position.set(0, 0, 42);
+        points.position.set(0.5, 0.4, 42);
       }
     }
     applyTransform();
@@ -239,28 +243,70 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     const tmpA = new THREE.Vector3();
     const tmpB = new THREE.Vector3();
 
+    // Fly-in offset: each vertex gets a random direction × big initial distance.
+    // Intensity eases 1→0 during intro so dots appear to stream in from off-screen toward their home.
+    const flyInDirs = new Float32Array(originalPositions.length);
+    for (let g = 0; g < originalPositions.length; g += 3) {
+      // Random direction on a unit sphere (uniformly distributed)
+      const u = Math.random(), v = Math.random();
+      const theta = 2 * Math.PI * u;
+      const phi = Math.acos(2 * v - 1);
+      flyInDirs[g]     = Math.sin(phi) * Math.cos(theta);
+      flyInDirs[g + 1] = Math.sin(phi) * Math.sin(theta);
+      flyInDirs[g + 2] = Math.cos(phi);
+    }
+    // Distance far enough that dots start well outside the viewport at camera z=50 with fov 60°
+    const FLY_IN_DISTANCE = 80;
+    let flyInStrength = 1; // eases 1→0 during intro
+
     // OG wave intensity curve: starts huge (30), animates down to 0.02 over 2s, then spatialBlend 0→1
     let waveIntensity = 30;
     let spatialBlend = 0;
     let introComplete = false;
 
-    if (isTouch || prefersReducedMotion) {
-      waveIntensity = 0.02;
-      spatialBlend = isTouch ? 0 : 1;
-      introComplete = true;
-    } else {
+    function startIntro() {
+      // Only skip the intro for users who've asked for reduced motion.
+      // Touch-capable devices (phones, tablets, touchscreen laptops) still see it.
+      if (prefersReducedMotion) {
+        waveIntensity = 0.02;
+        spatialBlend = 1;
+        flyInStrength = 0;
+        introComplete = true;
+        window.dispatchEvent(new CustomEvent('logodots:ready'));
+        return;
+      }
+      // Fly-in: dots stream from off-screen to their home position over 1.4s
+      gsap.to({ v: 1 }, {
+        v: 0, duration: 1.4, ease: 'power3.out',
+        onUpdate() { flyInStrength = (this.targets()[0] as any).v; },
+      });
       gsap.to({ v: waveIntensity }, {
-        v: 0.02, duration: 2, ease: 'power3.inOut', delay: 0.5,
+        v: 0.02, duration: 2, ease: 'power3.inOut',
         onUpdate() { waveIntensity = (this.targets()[0] as any).v; },
         onComplete() {
           introComplete = true;
           gsap.to({ v: 0 }, {
             v: 1, duration: 1.5, ease: 'power2.inOut',
             onUpdate() { spatialBlend = (this.targets()[0] as any).v; },
+            onComplete() {
+              window.dispatchEvent(new CustomEvent('logodots:ready'));
+            },
           });
         },
       });
     }
+
+    // Wait for loader to finish before starting the intro.
+    // If the loader never exists (e.g. the component is reused elsewhere), start after a short delay.
+    let introStarted = false;
+    function triggerIntro() {
+      if (introStarted) return;
+      introStarted = true;
+      startIntro();
+    }
+    window.addEventListener('logodots:start', triggerIntro, { once: true });
+    // If the loader has already dispatched the event before this component mounted, catch it.
+    if ((window as any).__logodotsStartFired) triggerIntro();
 
     function onResize() {
       renderer.setSize(window.innerWidth, window.innerHeight, false);
@@ -320,7 +366,8 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
         }
       }
 
-      // Wave displacement
+      // Wave displacement + fly-in offset
+      const flyScale = FLY_IN_DISTANCE * flyInStrength;
       for (let g = 0; g < livePositions.length; g += 3) {
         const v = originalPositions[g];
         const y = originalPositions[g + 1];
@@ -333,6 +380,12 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
           z: wIdx.z * (1 - spatialBlend) + wPos.z * spatialBlend,
         };
         Ki(livePositions, g, originalPositions, blended, waveIntensity, deflectionCurrent, isTouch);
+        // Additive fly-in displacement — each dot enters from its random direction
+        if (flyScale > 0.01) {
+          livePositions[g]     += flyInDirs[g]     * flyScale;
+          livePositions[g + 1] += flyInDirs[g + 1] * flyScale;
+          livePositions[g + 2] += flyInDirs[g + 2] * flyScale;
+        }
       }
       (geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
       renderer.render(scene, camera);

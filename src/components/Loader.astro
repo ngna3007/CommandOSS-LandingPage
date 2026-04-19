@@ -1,0 +1,614 @@
+---
+// Faithful port of aminezegmou.com Loader (Vue/Nuxt) → vanilla JS + GSAP.
+// 4 timelines: intro (draw) → progress (random steps) → complete (ready state)
+// → exit (on click). Hover scales circles. CommandOSS palette + "C" logo.
+---
+
+<div class="cmdoss-loader" data-loader>
+  <div class="cmdoss-loader__bg" data-bg></div>
+
+  <!-- Ambient technical layer (decorative, non-interactive) -->
+  <div class="lo-layer" aria-hidden="true">
+    <div class="layer-slashes"><span data-slashes="//////////////////////////////////////////////////">//////////////////////////////////////////////////</span></div>
+    <div class="layer-dots-l"><div></div><div></div><div></div><div></div></div>
+    <div class="layer-dots-r"><div></div><div></div><div></div><div></div></div>
+    <div class="layer-logo">
+      <svg viewBox="0 0 435 435" xmlns="http://www.w3.org/2000/svg">
+        <g fill="currentColor">
+          <path d="M224.38 377.35 l0.13 -57.69 25.49 -0.25 c17.84 -0.17 26.08 -0.38 27.40 -0.76 9.47 -2.51 16.06 -6.07 22.26 -11.94 8.37 -7.94 13.51 -18.22 14.15 -28.33 l0.25 -3.95 10.45 -0.04 c5.73 0 22.60 -0.04 37.43 -0.08 l26.98 -0.08 0 22.30 c-0.04 21.03 -0.08 22.60 -0.93 27.40 -2.85 15.55 -8.79 28.38 -18.65 40.14 -13.89 16.52 -34.96 27.82 -57.09 30.54 -2.21 0.30 -16.14 0.47 -36.83 0.47 l-33.26 0 0 19.97 0 19.97 -8.92 0 -8.92 0 0.08 -57.65z"/>
+          <path d="M117.25 394.39 c-25.06 -3.82 -47.28 -17.63 -60.96 -37.98 -5.86 -8.71 -9.64 -16.99 -12.06 -26.42 -2.51 -9.73 -2.59 -11.04 -2.59 -48.77 l0 -34.41 -20.82 0 -20.82 0 0 -8.71 0 -8.71 58.75 0.08 58.71 0.13 0.04 24.85 c0 26.76 0.04 27.36 2.38 34.20 4.50 13.08 15.55 23.96 28.97 28.46 6.75 2.25 7.77 2.34 33.64 2.34 l23.96 0 0 37.81 0 37.81 -42.57 -0.04 c-34.75 -0.04 -43.33 -0.17 -46.64 -0.64z"/>
+          <path d="M41.63 167.71 c0 -39.76 0.04 -42.99 0.81 -48.13 2.85 -19.16 11 -35.47 24.64 -49.11 13.85 -13.85 31.18 -22.47 50.68 -25.23 3.53 -0.51 10.75 -0.64 37.85 -0.64 l33.43 0 0 -22.30 0 -22.30 8.71 0 8.71 0 0 60.11 0 60.11 -23.75 0 c-25.49 0 -27.06 0.08 -33.43 2.29 -13.04 4.42 -23.83 14.66 -28.67 27.19 -2.97 7.69 -3.06 8.41 -3.23 35.85 l-0.21 24.72 -37.77 0 -37.77 0 0 -42.57z"/>
+          <path d="M313.80 162.79 c-0.81 -11.13 -6.03 -22.09 -14.36 -30.03 -5.90 -5.56 -11.94 -8.92 -20.77 -11.38 -3.06 -0.85 -4.25 -0.89 -28.76 -1.06 l-25.62 -0.13 0 -37.81 0 -37.77 42.31 0 c36.11 0 42.99 0.08 46.86 0.68 22.05 3.23 42.06 14.02 55.31 29.82 10.96 13.08 17.50 27.99 19.71 44.86 0.51 3.87 0.64 9.52 0.64 25.79 l0 20.77 -37.55 0 -37.55 0 -0.25 -3.74z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="layer-top-right">
+      <div class="layer-col"><div>3AEE 01 2000</div></div>
+      <div class="layer-col"><div>HCMC GMT +7</div><div>10.776°N, 106.701°E</div></div>
+      <div class="layer-col"><div>Sui Network</div><div>Mysten Labs</div></div>
+      <div class="layer-col"><div>100101 00 011101 001</div></div>
+    </div>
+  </div>
+
+  <!-- Top-left: 0 (counter) → Ready (swap on complete) -->
+  <div class="cmdoss-loader__top">
+    <div class="lo-nbr"><span class="l_"><span class="l" data-nbr>0</span></span></div>
+    <div class="lo-ready"><span class="l_"><span class="l" data-ready>Ready</span></span></div>
+  </div>
+
+  <!-- Center: circles + logo/Enter/Authorized Access stacked -->
+  <div class="cmdoss-loader__center" data-center style="pointer-events:none;">
+    <div class="lo-logo" data-logo aria-hidden="true">
+      <svg viewBox="0 0 435 435" xmlns="http://www.w3.org/2000/svg">
+        <g fill="currentColor">
+          <path d="M224.38 377.35 l0.13 -57.69 25.49 -0.25 c17.84 -0.17 26.08 -0.38 27.40 -0.76 9.47 -2.51 16.06 -6.07 22.26 -11.94 8.37 -7.94 13.51 -18.22 14.15 -28.33 l0.25 -3.95 10.45 -0.04 c5.73 0 22.60 -0.04 37.43 -0.08 l26.98 -0.08 0 22.30 c-0.04 21.03 -0.08 22.60 -0.93 27.40 -2.85 15.55 -8.79 28.38 -18.65 40.14 -13.89 16.52 -34.96 27.82 -57.09 30.54 -2.21 0.30 -16.14 0.47 -36.83 0.47 l-33.26 0 0 19.97 0 19.97 -8.92 0 -8.92 0 0.08 -57.65z"/>
+          <path d="M117.25 394.39 c-25.06 -3.82 -47.28 -17.63 -60.96 -37.98 -5.86 -8.71 -9.64 -16.99 -12.06 -26.42 -2.51 -9.73 -2.59 -11.04 -2.59 -48.77 l0 -34.41 -20.82 0 -20.82 0 0 -8.71 0 -8.71 58.75 0.08 58.71 0.13 0.04 24.85 c0 26.76 0.04 27.36 2.38 34.20 4.50 13.08 15.55 23.96 28.97 28.46 6.75 2.25 7.77 2.34 33.64 2.34 l23.96 0 0 37.81 0 37.81 -42.57 -0.04 c-34.75 -0.04 -43.33 -0.17 -46.64 -0.64z"/>
+          <path d="M41.63 167.71 c0 -39.76 0.04 -42.99 0.81 -48.13 2.85 -19.16 11 -35.47 24.64 -49.11 13.85 -13.85 31.18 -22.47 50.68 -25.23 3.53 -0.51 10.75 -0.64 37.85 -0.64 l33.43 0 0 -22.30 0 -22.30 8.71 0 8.71 0 0 60.11 0 60.11 -23.75 0 c-25.49 0 -27.06 0.08 -33.43 2.29 -13.04 4.42 -23.83 14.66 -28.67 27.19 -2.97 7.69 -3.06 8.41 -3.23 35.85 l-0.21 24.72 -37.77 0 -37.77 0 0 -42.57z"/>
+          <path d="M313.80 162.79 c-0.81 -11.13 -6.03 -22.09 -14.36 -30.03 -5.90 -5.56 -11.94 -8.92 -20.77 -11.38 -3.06 -0.85 -4.25 -0.89 -28.76 -1.06 l-25.62 -0.13 0 -37.81 0 -37.77 42.31 0 c36.11 0 42.99 0.08 46.86 0.68 22.05 3.23 42.06 14.02 55.31 29.82 10.96 13.08 17.50 27.99 19.71 44.86 0.51 3.87 0.64 9.52 0.64 25.79 l0 20.77 -37.55 0 -37.55 0 -0.25 -3.74z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="lo-cta"><span class="l_"><span class="l" data-cta>Enter</span></span></div>
+    <div class="lo-exit"><span class="l_"><span class="l" data-exit>Authorized Access</span></span></div>
+    <div class="lo-circles">
+      <svg viewBox="0 0 218 218" data-svg>
+        <circle cx="109.323" cy="109.323" r="108.323" data-ring-outline></circle>
+        <circle cx="109.323" cy="109.323" r="108.323" data-ring-progress></circle>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Bottom: 3 columns -->
+  <div class="lo-bottom">
+    <div class="lo-text">
+      <span class="l_"><span class="l">CommandOSS</span></span>
+      <span class="l_"><span class="l">Sui Eng Unit</span></span>
+    </div>
+    <div class="lo-text">
+      <span class="l_"><span class="l">Overview:</span></span>
+      <span class="l_"><span class="l">Ho Chi Minh City</span></span>
+    </div>
+    <div class="lo-text">
+      <div class="recs">
+        <span class="c_"><span class="c">▊</span></span>
+        <span class="c_"><span class="c">▊</span></span>
+        <span class="c_"><span class="c">▊</span></span>
+      </div>
+      <span class="l_"><span class="l">V-001</span></span>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  .cmdoss-loader {
+    position: fixed; inset: 0; z-index: 9997;
+    overflow: hidden; text-transform: uppercase;
+    font-family: 'saans', ui-monospace, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px; line-height: 1.1; letter-spacing: 0.04em;
+    color: var(--loader-fg, #e8ecf5);
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .cmdoss-loader__bg {
+    position: absolute; inset: 0;
+    background: var(--loader-bg, #0a0e1a);
+  }
+
+  /* ===== Ambient technical layer ===== */
+  .lo-layer {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    color: rgba(232, 236, 245, 0.5);
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+  /* Initial hidden — GSAP fades/blinks them in during intro + complete */
+  .lo-layer .layer-slashes,
+  .lo-layer .layer-logo,
+  .lo-layer .layer-top-right .layer-col,
+  .lo-layer .layer-dots-l > div,
+  .lo-layer .layer-dots-r > div { opacity: 0; }
+  /* Slashes at top, right of counter — fixed container with marquee inside. */
+  .layer-slashes {
+    position: absolute; top: 28px; left: 140px;
+    width: 300px; overflow: hidden; white-space: nowrap;
+  }
+  .layer-slashes > span {
+    display: inline-block; white-space: nowrap;
+    animation: lo-slash-scroll 18s linear infinite;
+  }
+  .layer-slashes > span::after {
+    content: attr(data-slashes);
+    display: inline;
+  }
+  @keyframes lo-slash-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  /* 4 small dots on each vertical edge, centered vertically, well away from the center ring */
+  .layer-dots-l, .layer-dots-r {
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 64px;
+  }
+  .layer-dots-l { left: 24px; }
+  .layer-dots-r { right: 24px; }
+  .layer-dots-l > div, .layer-dots-r > div {
+    width: 3px; height: 3px;
+    background: rgba(232, 236, 245, 0.45);
+  }
+  /* Dashed-border mini logo frame near the top-right system readouts */
+  .layer-logo {
+    position: absolute; top: 100px; right: 24px;
+    width: 28px; height: 28px;
+    border: 1px dashed rgba(232, 236, 245, 0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(232, 236, 245, 0.55);
+  }
+  .layer-logo svg { width: 16px; height: 16px; display: block; }
+  /* Top-right system readouts — in columns, safely to the right of top-left counter area */
+  .layer-top-right {
+    position: absolute; top: 24px; right: 80px;
+    display: flex; gap: 22px; align-items: flex-start;
+    color: rgba(232, 236, 245, 0.6);
+  }
+  .layer-col { display: flex; flex-direction: column; gap: 2px; }
+  .layer-col > div { white-space: nowrap; }
+
+  @media (max-width: 1100px) {
+    .layer-slashes { width: 220px; }
+    .layer-top-right { right: 60px; gap: 18px; }
+    .layer-logo { right: 18px; top: 70px; }
+  }
+  @media (max-width: 900px) {
+    .layer-col:nth-child(3), .layer-col:nth-child(4) { display: none; }
+    .layer-slashes { width: 180px; }
+  }
+  @media (max-width: 768px) {
+    .layer-slashes { width: 120px; left: 120px; }
+    .layer-col:nth-child(2) { font-size: 9px; }
+    .layer-top-right { gap: 14px; right: 50px; }
+  }
+  @media (max-width: 640px) {
+    .layer-slashes, .layer-logo, .layer-top-right { display: none; }
+    .layer-dots-l, .layer-dots-r { gap: 40px; }
+  }
+
+  /* Line-reveal primitive (matches OG .l_ / .l) */
+  .cmdoss-loader .l_ { display: block; overflow: hidden; }
+  .cmdoss-loader .l  {
+    display: block; white-space: nowrap;
+    transform: translate3d(0, 110%, 0);
+    will-change: transform;
+  }
+  .cmdoss-loader .c_ { display: inline-block; overflow: hidden; }
+  .cmdoss-loader .c  {
+    display: inline-block; white-space: nowrap;
+    opacity: 0; will-change: opacity;
+    color: var(--loader-accent, #7c9dff);
+  }
+
+  /* Top-left slot: two stacked rows, 4rem wide, 2rem tall */
+  .cmdoss-loader__top {
+    position: absolute; top: 24px; left: 24px;
+    width: 64px; height: 18px; overflow: hidden;
+    pointer-events: none;
+  }
+  .cmdoss-loader__top > div { position: absolute; inset: 0; }
+
+  /* Center block — fixed size, ring + stacked text */
+  .cmdoss-loader__center {
+    position: relative;
+    width: 220px; height: 220px;
+  }
+  .cmdoss-loader__center > div {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .lo-logo {
+    width: 46px; height: 46px;
+    color: var(--loader-fg, #e8ecf5);
+    will-change: opacity;
+  }
+  .lo-logo svg { width: 100%; height: 100%; display: block; }
+  .lo-cta, .lo-exit {
+    letter-spacing: 0.12em; font-size: 13px;
+  }
+  .lo-exit { font-size: 11px; opacity: 0.6; }
+
+  /* Copied verbatim from OG (amine) CSS */
+  .lo-circles {
+    height: 100%; left: 0; position: absolute; top: 0; width: 100%;
+    pointer-events: none;
+  }
+  .lo-circles svg {
+    width: 100%; height: 100%;
+    overflow: visible;
+    transform: rotate(-90deg);
+  }
+  .lo-circles circle {
+    fill: none;
+    stroke: var(--loader-fg, #e8ecf5);
+    transform-origin: center center;
+    will-change: stroke-dashoffset;
+    /* Initial hidden state BEFORE GSAP runs (matches OG inline style) */
+    stroke-dasharray: 680.5;
+    stroke-dashoffset: 680.5;
+  }
+  .lo-circles circle:first-child {
+    stroke: rgba(232, 236, 245, 0.3);
+  }
+  /* Initial hidden state for logo (GSAP reveals it via the intro) */
+  .lo-logo { opacity: 1; }
+
+  /* Bottom: 3 columns mirroring OG lo-bottom structure */
+  .lo-bottom {
+    position: absolute; bottom: 24px; left: 24px; right: 24px;
+    display: flex; align-items: flex-end; gap: 32px;
+    pointer-events: none;
+  }
+  .lo-text {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .lo-text:nth-child(1) { width: 180px; }
+  .lo-text:nth-child(2) { flex: 1; }
+  .lo-text:nth-child(3) {
+    margin-left: auto; text-align: right;
+    align-items: flex-end;
+  }
+  .recs {
+    display: inline-flex; gap: 3px; height: 14px;
+    margin-top: 2px; overflow: hidden;
+  }
+
+  /* Enable interactivity on center when ready */
+  .cmdoss-loader.is-complete .cmdoss-loader__center {
+    pointer-events: auto !important;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .lo-bottom { gap: 24px; font-size: 10px; }
+    .lo-text:nth-child(1) { width: 130px; }
+    .lo-text:nth-child(2) { font-size: 10px; }
+  }
+  @media (max-width: 640px) {
+    .cmdoss-loader__center { width: 180px; height: 180px; }
+    .lo-logo { width: 36px; height: 36px; }
+    .lo-bottom { gap: 12px; font-size: 9px; flex-wrap: wrap; }
+    .lo-text:nth-child(1), .lo-text:nth-child(2) { width: auto; flex: 0 0 auto; }
+    .lo-text:nth-child(3) { margin-left: auto; }
+    .cmdoss-loader__top { top: 16px; left: 16px; }
+    .layer-dots-l { left: 16px; }
+    .layer-dots-r { right: 16px; }
+    .lo-bottom { bottom: 16px; left: 16px; right: 16px; }
+  }
+  @media (max-width: 420px) {
+    .cmdoss-loader__center { width: 150px; height: 150px; }
+    .lo-logo { width: 30px; height: 30px; }
+    .lo-cta, .lo-exit { font-size: 11px; }
+    .lo-bottom { font-size: 8.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cmdoss-loader .l { transform: none !important; }
+    .cmdoss-loader .c { opacity: 1 !important; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+
+  (() => {
+    const root = document.querySelector('[data-loader]') as HTMLElement | null;
+    if (!root) return;
+
+    const bgEl      = root.querySelector('[data-bg]') as HTMLElement;
+    const nbrEl     = root.querySelector('[data-nbr]') as HTMLElement;
+    const readyEl   = root.querySelector('[data-ready]') as HTMLElement;
+    const logoEl    = root.querySelector('[data-logo]') as HTMLElement;
+    const ctaEl     = root.querySelector('[data-cta]') as HTMLElement;
+    const exitEl    = root.querySelector('[data-exit]') as HTMLElement;
+    const centerEl  = root.querySelector('[data-center]') as HTMLElement;
+    const svgEl     = root.querySelector('[data-svg]') as SVGSVGElement;
+    const ringOut   = root.querySelector('[data-ring-outline]') as SVGCircleElement;
+    const ringPrg   = root.querySelector('[data-ring-progress]') as SVGCircleElement;
+    const bottomEls = root.querySelectorAll('.lo-bottom .l');
+    const charEls   = root.querySelectorAll('.lo-text .c');
+
+    // Constants from OG source: I = 680.5, Z = 100, step count 5..7
+    const I = 680.5;
+    const Z = 100;
+    const STEP_MIN = 5;
+    const STEP_MAX = 7;
+
+    // Lock scroll
+    const origOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+
+    // Initial state — match OG exactly: both circles hidden (dashoffset = full circumference).
+    // No explicit transformOrigin here — CSS sets `transform-origin: center center` on the circles.
+    gsap.set([ringOut, ringPrg], { strokeDasharray: I, strokeDashoffset: I });
+    // Flip only the progress ring so it fills clockwise (outline still CCW)
+    gsap.set(ringPrg, { scaleY: -1, transformOrigin: '50% 50%' });
+    gsap.set(nbrEl, { y: '110%' });
+    gsap.set(readyEl, { y: '110%' });
+    gsap.set(ctaEl, { y: '110%' });
+    gsap.set(exitEl, { y: '110%' });
+    gsap.set('.lo-bottom .l', { y: '110%' });
+    gsap.set(charEls, { opacity: 0 });
+
+    // -------- 1. Intro (draw ring, show counter) --------
+    function intro(): Promise<void> {
+      return new Promise(resolve => {
+        const tl = gsap.timeline({ onComplete: resolve });
+        tl.addLabel('start', 0);
+        // SVG rotates 270° (from -360 to -90) while ring fills
+        tl.fromTo(svgEl, { rotate: -360 }, { rotate: -90, duration: 1.6, ease: 'power2.inOut' }, 'start');
+        // OG: the FIRST circle (cirOutline / i) draws during intro
+        tl.fromTo(ringOut, { strokeDashoffset: I }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 'start');
+        // Counter "0" slides up into view
+        tl.to(nbrEl, { y: '0%', duration: 1.4, ease: 'power3.out' }, '-=0.2');
+        // Bottom text staggers in
+        tl.to('.lo-bottom .l', { y: '0%', duration: 1.4, ease: 'power3.out', stagger: 0.08 }, 'start+=0.4');
+        // Recording bars fade in (random stagger)
+        tl.to(charEls, { opacity: 1, duration: 0.4, stagger: { each: 0.05, from: 'random' } }, 'start+=0.7');
+        // Technical details (slashes, dots, logo frame, system readouts) blink in with random stagger
+        tl.to('.lo-layer .layer-slashes', { opacity: 0.35, duration: 0.5, ease: 'power2.out' }, 'start+=0.8');
+        tl.to('.lo-layer .layer-logo', { opacity: 1, duration: 0.4, ease: 'power2.out' }, 'start+=0.95');
+        tl.to('.lo-layer .layer-top-right .layer-col', { opacity: 1, duration: 0.4, stagger: { each: 0.08, from: 'start' }, ease: 'power2.out' }, 'start+=1.0');
+        tl.to(['.lo-layer .layer-dots-l > div', '.lo-layer .layer-dots-r > div'], { opacity: 0.45, duration: 0.3, stagger: { each: 0.06, from: 'random' }, ease: 'power2.out' }, 'start+=0.9');
+      });
+    }
+
+    // -------- 2. Random progress steps (5..7 checkpoints summing to 100) --------
+    function randomSteps(): number[] {
+      const out: number[] = [];
+      const count = Math.floor(Math.random() * (STEP_MAX - STEP_MIN + 1)) + STEP_MIN;
+      let last = 0;
+      const chunk = Z / count;
+      for (let i = 0; i < count; i++) {
+        const lo = last + 1;
+        const hi = Math.min(last + chunk + 10, Z - 1);
+        last = Math.floor(Math.random() * (hi - lo + 1)) + lo;
+        out.push(last);
+      }
+      out[out.length - 1] = Z;
+      return out;
+    }
+
+    function progress(): Promise<void> {
+      return new Promise(resolve => {
+        const steps = randomSteps();
+        const dur = 1.5 / steps.length;
+        const tl = gsap.timeline({ onComplete: resolve });
+        steps.forEach((pct, idx) => {
+          // OG formula exactly: B = I + I*pct/Z
+          const dashOff = I + (I * pct) / Z;
+          tl.to(ringPrg, {
+            strokeDashoffset: dashOff,
+            duration: dur,
+            ease: 'power2.out',
+            onStart: () => {
+              nbrEl.textContent = String(pct).padStart(2, '0');
+            },
+          }, idx * dur);
+        });
+      });
+    }
+
+    // -------- 3. Complete (ready state) --------
+    function complete() {
+      const enableInteraction = () => {
+        centerEl.style.pointerEvents = 'auto';
+        centerEl.style.cursor = 'pointer';
+        centerEl.addEventListener('click', dismiss);
+        centerEl.addEventListener('mouseenter', hoverEnter);
+        centerEl.addEventListener('mouseleave', hoverLeave);
+        // If the cursor is already over the center at the moment interactivity enables,
+        // browsers won't fire mouseenter — manually trigger the hover animation.
+        if (centerEl.matches(':hover')) hoverEnter();
+      };
+      const tl = gsap.timeline();
+      tl.addLabel('start', 0);
+      tl.set(ringOut, { strokeDasharray: '2 2' }, 'start');
+      tl.set(ringPrg, { strokeDasharray: 'none', strokeDashoffset: 0 }, 'start');
+      tl.to(nbrEl, { y: '-110%', duration: 0.5, ease: 'power3.in' }, 'start');
+      tl.to(readyEl, { y: '0%', duration: 0.9, ease: 'power3.out' }, 'start+=0.25');
+      tl.to(logoEl, { opacity: 0, duration: 0.35, ease: 'power2.out' }, 'start');
+      tl.to(ctaEl, { y: '0%', duration: 0.9, ease: 'power3.out' }, 'start+=0.35');
+      tl.to(ringOut, { scale: 0.8, duration: 1.1, ease: 'power3.out' }, 'start+=0.2');
+      tl.to(ringPrg, { scaleX: 0.88, scaleY: -0.88, duration: 1.1, ease: 'power3.out' }, 'start+=0.3');
+      // Enable interactivity as soon as Enter is visible (~0.8s), not at the end of all tweens
+      tl.call(enableInteraction, [], 'start+=0.8');
+    }
+
+    // -------- Hover (scale circles in) --------
+    function hoverEnter() {
+      gsap.to(ringOut, { scale: 0.9, duration: 0.6, ease: 'power3.out', overwrite: true });
+      gsap.to(ringPrg, { scaleX: 0.7, scaleY: -0.7, duration: 0.6, ease: 'power3.out', overwrite: true });
+    }
+    function hoverLeave() {
+      gsap.to(ringOut, { scale: 0.8, duration: 0.8, ease: 'power3.out', overwrite: true });
+      gsap.to(ringPrg, { scaleX: 0.88, scaleY: -0.88, duration: 0.8, ease: 'power3.out', overwrite: true });
+    }
+
+    // -------- 4. Exit (dismiss) --------
+    let exiting = false;
+    function dismiss() {
+      if (exiting) return;
+      exiting = true;
+      centerEl.style.pointerEvents = 'none';
+      centerEl.style.cursor = 'default';
+
+      // --- 1. Quick exit of loader chrome (ring, enter, counter, bottom, technical layer) ---
+      const chromeTl = gsap.timeline();
+      chromeTl.to(ringPrg, { opacity: 0, duration: 0.3, ease: 'power2.out', overwrite: true }, 0);
+      chromeTl.to(ctaEl, { y: '-110%', duration: 0.5, ease: 'power3.in', overwrite: true }, 0);
+      chromeTl.to(logoEl, { opacity: 0, duration: 0.3, ease: 'power2.out', overwrite: true }, 0);
+      chromeTl.to(
+        ['.lo-bottom', '.lo-layer', '.cmdoss-loader__top'],
+        { opacity: 0, duration: 0.5, ease: 'power2.out' },
+        0
+      );
+
+      // --- 2. Burst the dashed ring into DOM particles ---
+      // ringOut is the INNER dashed circle. Compute its screen position + radius.
+      const ringRect = ringOut.getBoundingClientRect();
+      const ringCx = ringRect.left + ringRect.width / 2;
+      const ringCy = ringRect.top + ringRect.height / 2;
+      // The dashed circle has scale 0.8 applied, so visible radius ≈ (width / 2) * 0.8 / current SVG container ratio.
+      // Simpler: use half of the bounding rect width (rect already reflects scale).
+      const radius = ringRect.width / 2;
+
+      // Create particles container (fixed, non-interactive, on top).
+      // Class `cmdoss-loader-particles` exempts it from the pre-reveal visibility:hidden rule.
+      const particleContainer = document.createElement('div');
+      particleContainer.className = 'cmdoss-loader-particles';
+      particleContainer.style.cssText = `
+        position: fixed; inset: 0; pointer-events: none;
+        z-index: 9998; overflow: visible;
+      `;
+      document.body.appendChild(particleContainer);
+
+      // Hide the actual dashed ring now that we'll simulate it with DOM dots
+      gsap.set(ringOut, { opacity: 0 });
+
+      // Generate dots around the circle perimeter. Count matches the OG "2 2" dasharray density.
+      // Perimeter at radius R ≈ 2πR. With 2-on / 2-off pattern → dash count ≈ perimeter / 4.
+      // Dots spawn around the ring with random angular offsets + small radial jitter.
+      // This creates a more organic cluster with visible gaps (vs a perfectly-tight perimeter line).
+      const DOT_COUNT = 260;
+      const dots: HTMLDivElement[] = [];
+      for (let i = 0; i < DOT_COUNT; i++) {
+        // Random angle — spreads dots around full circle but with natural gaps/clumps
+        const angle = Math.random() * Math.PI * 2 - Math.PI / 2;
+        // Small radial jitter so they don't all land on the exact ring line
+        const rOff = (Math.random() - 0.5) * 14;
+        const r = radius + rOff;
+        const x = ringCx + Math.cos(angle) * r;
+        const y = ringCy + Math.sin(angle) * r;
+        const d = document.createElement('div');
+        d.style.cssText = `
+          position: absolute;
+          left: ${x}px; top: ${y}px;
+          width: 5px; height: 5px;
+          background: rgb(28, 45, 125);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          will-change: transform, background-color, opacity;
+        `;
+        particleContainer.appendChild(d);
+        dots.push(d);
+        // Attach the dot's spawn angle as a data attr so later phases can use it for directional fly-out
+        (d as any).__angle = angle;
+      }
+
+      // Center of viewport (approx where hero dots will appear)
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const targetCx = vw / 2;
+      const targetCy = vh / 2;
+
+      // Particle animation timeline
+      const pTl = gsap.timeline({
+        onComplete: () => {
+          particleContainer.remove();
+          document.documentElement.style.overflow = origOverflow;
+          document.body.classList.remove('loader-active');
+          root.remove();
+        },
+      });
+
+      // =============================================================
+      // Per-particle motion uses the EXACT OG wave math so DOM particles
+      // look identical to LogoDots WebGL dots during the scatter phase.
+      //
+      // OG per-vertex loop:
+      //   time += 0.01 each frame
+      //   const v = orig[g], y = orig[g+1], b = orig[g+2]
+      //   const wIdx = Gi(time, g, g, g)   // index-phased (used when spatialBlend=0)
+      //   pos[g]   = orig[g]   + wIdx.x * waveIntensity
+      //   pos[g+1] = orig[g+1] + wIdx.y * waveIntensity
+      //
+      //   Xi(t,e,n,useCos) = 0.5 * sin( (useCos?cos:sin)(t + e*n) * PI )
+      //   Gi(t,px,py,pz) = {
+      //     x: Xi(t, px, 0.01, false),
+      //     y: Xi(t, py, 0.015, true ),
+      //     z: Xi(t, pz, 0.02, false),
+      //   }
+      //
+      // For DOM particles: pick home positions in a small screen cloud,
+      // use particle's DOM-array index as the phase (like OG uses vertex index),
+      // and apply the same Gi formula to offset position each frame.
+      //
+      // WORLD→SCREEN scale: OG uses world units, max displacement = 0.5 * 30 = ±15.
+      // We want DOM displacement to LOOK the same on screen. OG camera FOV 60° at z=50,
+      // viewport height ≈ 2*50*tan(30°) ≈ 57.7 world units = full vh pixels.
+      // So 1 world unit ≈ vh/57.7 pixels → 15 world units ≈ vh*0.26 ≈ 208px on a 800px tall viewport.
+      // =============================================================
+      // Phase 1: SOFT BURST (0 → 0.55s) — ring gently expands outward
+      dots.forEach((dot) => {
+        const angle = (dot as any).__angle as number;
+        const expandDist = 40 + Math.random() * 25;
+        pTl.to(dot, {
+          x: Math.cos(angle) * expandDist,
+          y: Math.sin(angle) * expandDist,
+          duration: 0.55,
+          ease: 'power1.out',
+        }, 0);
+      });
+
+      // Phase 2: STRONG FAST FLY-OUT (0.55 → 1.35s) — accelerates straight off the edges
+      const flyDistance = Math.hypot(vw, vh) * 1.1;
+      dots.forEach((dot) => {
+        const angle = (dot as any).__angle as number;
+        const jitter = (Math.random() - 0.5) * 0.4;
+        const outAngle = angle + jitter;
+        const farX = Math.cos(outAngle) * flyDistance;
+        const farY = Math.sin(outAngle) * flyDistance;
+        pTl.to(dot, {
+          x: farX,
+          y: farY,
+          duration: 0.7 + Math.random() * 0.15,
+          ease: 'power3.in',
+        }, 0.55);
+      });
+
+      // Particles are off-screen by ~1.35s. Delay before C forms to let silence breathe.
+      pTl.call(() => {
+        (window as any).__logodotsStartFired = true;
+        window.dispatchEvent(new CustomEvent('logodots:start'));
+      }, [], 1.6);
+
+      // Phase 3: FADE — particles fade out as they exit (1.1 → 1.5s, near the edges)
+      dots.forEach((dot) => {
+        pTl.to(dot, {
+          opacity: 0,
+          duration: 0.35,
+          ease: 'power1.in',
+        }, 1.1 + Math.random() * 0.15);
+      });
+
+      // Bg + root fade with the particles
+      pTl.to(bgEl, { opacity: 0, duration: 0.8, ease: 'power2.out' }, 0.6);
+      pTl.to(root, { opacity: 0, duration: 0.4, ease: 'power2.out' }, 1.5);
+    }
+
+    // Keyboard
+    window.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && root.classList.contains('is-complete')) {
+        e.preventDefault();
+        dismiss();
+      }
+    });
+
+    // Run sequence
+    (async () => {
+      await intro();
+      await progress();
+      root.classList.add('is-complete');
+      complete();
+    })();
+  })();
+</script>

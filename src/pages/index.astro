@@ -1,6 +1,7 @@
 ---
 // Ported from live worldquantfoundry.com HTML. Baseline — rebrand + refactor next.
 import LogoDots from '../components/LogoDots.astro';
+import Loader from '../components/Loader.astro';
 ---
 <html lang="en">
 <head>
@@ -8,10 +9,48 @@ import LogoDots from '../components/LogoDots.astro';
 	[data-commandoss-brand] { transition: width 600ms cubic-bezier(0.65,0,0.35,1); }
 	.-scrolled [data-commandoss-brand] { width: 30px !important; }
 	.-scrolled [data-commandoss-img] { left: 0 !important; }
+	@media (max-width: 480px) {
+		[data-commandoss-brand] { width: 120px !important; }
+	}
 	@media (prefers-reduced-motion: reduce) {
 		[data-commandoss-brand], [data-commandoss-img] { transition-duration: 0ms !important; }
 	}
+	/* dvh fallback for older Safari — vh first (always supported), dvh overrides when available */
+	.h-dvh { height: 100vh; height: 100dvh; }
+	/* While the loader animation is playing, block all scroll & interaction on the rest of the page */
+	body.loader-active { overflow: hidden !important; }
+	body.loader-active #smooth-wrapper,
+	body.loader-active main,
+	body.loader-active section,
+	body.loader-active nav { pointer-events: none !important; user-select: none !important; }
+	/* Loader itself stays interactive */
+	body.loader-active .cmdoss-loader { pointer-events: auto !important; }
+
+	/* pre-reveal: before Enter click, nothing but the loader (+ its particle container)
+	   should be visible. Hides all regular page content; removed when logodots:start fires. */
+	html.pre-reveal body > :not(.cmdoss-loader):not(.cmdoss-loader-particles) { visibility: hidden !important; }
+	html.pre-reveal .logo-dots { visibility: hidden !important; }
+
+	/* Nav starts hidden — revealed by hero timeline alongside the bottom content (same transform). */
+	header[data-site-header] { opacity: 0; transform: translateY(20px); }
 </style>
+<script is:inline>
+	// Enable loader lock + pre-reveal ASAP (before any CSS paints)
+	document.documentElement.classList.add('loader-active', 'pre-reveal');
+	document.addEventListener('DOMContentLoaded', () => {
+		document.body.classList.add('loader-active');
+	});
+	// When Enter is clicked, the Loader dispatches logodots:start → reveal page content
+	// (but keep loader-active so interaction is still blocked until C is formed)
+	window.addEventListener('logodots:start', () => {
+		document.documentElement.classList.remove('pre-reveal');
+	}, { once: true });
+	// When WebGL intro fully done, release interaction lock
+	window.addEventListener('logodots:ready', () => {
+		document.body.classList.remove('loader-active');
+		document.documentElement.classList.remove('loader-active');
+	}, { once: true });
+</script>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +58,7 @@ import LogoDots from '../components/LogoDots.astro';
 
 		<link rel="preload" href="/assets/main.min.css" as="style" />
 		<link rel="stylesheet" href="/assets/main.min.css" />
+		<link rel="stylesheet" href="/palette.css" />
 
 		<script is:inline src="/assets/three.min.js" defer></script>
 		<script is:inline src="/assets/swiper.min.js" defer></script>
@@ -87,6 +127,7 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 <link href="https://www.worldquantfoundry.com/cpresources/7693493b/css/fields/phone-country.css?v=1771445336" rel="stylesheet">
 </head>
 <body class="bg-rich-carbon text-neural-fog font-roc-grotesk">
+<Loader />
 <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-8X176434G8"></script>
 
 		<div
@@ -122,6 +163,7 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 			<a class="skip-link" href="#main">Skip to content</a>
 			
 <header
+	data-site-header
 	class="layout--header group fixed top-0 isolate z-50 flex w-full items-center transition-transform duration-400 ease-(--easing) motion-reduce:duration-[0ms] lg:h-(--header-height) lg:overflow-hidden"
 	:class="{ '-scrolled': scrolled, '-mobile-menu-open': mobileMenuOpen, '-translate-y-full': hidden }"
 	x-data="{
@@ -240,13 +282,13 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 				<span
 					class="transition-transform duration-400 ease-(--easing) motion-safe:group-hover/link:-translate-y-full motion-reduce:duration-[0ms]"
 				>
-					WHY WQF
+					WHY CMDOSS
 				</span>
 				<span
 					class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) motion-safe:group-hover/link:translate-y-0 motion-reduce:duration-[0ms]"
 					aria-hidden="true"
 				>
-					WHY WQF
+					WHY CMDOSS
 				</span>
 			</div>
 		</div>
@@ -439,7 +481,7 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 								<div
 									class="flex h-[60px] items-center justify-center text-center"
 								>
-									<span class="p3-mono">WHY WQF</span>
+									<span class="p3-mono">WHY CMDOSS</span>
 								</div>
 							</a>
 															<svg class="size-[9px] corner-accent duration-400 opacity-40" width="10" height="10" alt="" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1092,26 +1134,28 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 			});
 			return Array.from(map.values());
 		};
-		const run = () => {
-			if (typeof gsap === 'undefined') { requestAnimationFrame(run); return; }
+		const firstRun = () => this._heroRun(1.2);
+		const rerun = () => this._heroRun(0);
+		this._heroRun = (delay) => {
+			if (typeof gsap === 'undefined') { requestAnimationFrame(rerun); return; }
+			if (this._heroTl) this._heroTl.kill();
 			const container = this.$refs.container;
+			if (!container) return;
 			const leftEls = Array.from(container.querySelectorAll('.hero-title--left'));
 			const rightEls = Array.from(container.querySelectorAll('.hero-title--right'));
 			const allTitles = [...leftEls, ...rightEls];
 			const bottom = this.$refs.bottom_content;
-			if (bottom) gsap.set(bottom, { opacity: 0, y: 20 });
 			gsap.set(allTitles, { x: 0, clearProps: 'clipPath,transform' });
+			if (bottom) gsap.set(bottom, { opacity: 0, y: 20 });
+			const headerEl = document.querySelector('[data-site-header]');
+			if (headerEl) gsap.set(headerEl, { opacity: 0, y: 20 });
 			const leftRows = groupByRow(leftEls);
 			const rightRows = groupByRow(rightEls);
 			const box = container.getBoundingClientRect();
 			const boxLeft = box.left;
 			const boxRight = box.right;
-			const tl = gsap.timeline({ delay: 1.2 });
-			tl.from(allTitles, {
-				css: { clipPath: 'inset(100% 0 0 0)', translateY: '-48px' },
-				duration: 1.4,
-				ease: 'power3.inOut',
-			});
+			const tl = gsap.timeline({ delay });
+			tl.from(allTitles, { css: { clipPath: 'inset(100% 0 0 0)', translateY: '-48px' }, duration: 1.4, ease: 'power3.inOut' });
 			leftRows.forEach(row => {
 				tl.to(row, {
 					x: (i, el) => {
@@ -1119,38 +1163,47 @@ gtag('config', 'G-8X176434G8', {'send_page_view': true,'anonymize_ip': false,'li
 						let cum = 0;
 						for (let s = 0; s < i; s++) {
 							const prev = row[s].getBoundingClientRect();
-							const gap = 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
-							cum += prev.width + gap;
+							cum += prev.width + 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
 						}
 						return boxLeft + cum - r.left;
 					},
-					duration: 1.25,
-					ease: 'power4.inOut',
-					stagger: 0.04,
+					duration: 1.25, ease: 'power4.inOut', stagger: 0.04,
 				}, 1);
 			});
 			rightRows.forEach(row => {
-				const reversed = [...row].reverse();
-				tl.to(reversed, {
+				tl.to([...row].reverse(), {
 					x: (i, el) => {
 						const r = el.getBoundingClientRect();
 						const idxFromEnd = row.length - 1 - i;
 						let cum = 0;
 						for (let s = row.length - 1; s > idxFromEnd; s--) {
 							const prev = row[s].getBoundingClientRect();
-							const gap = 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
-							cum += prev.width + gap;
+							cum += prev.width + 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
 						}
 						return boxRight - r.width - cum - r.left;
 					},
-					duration: 1.25,
-					ease: 'power4.inOut',
-					stagger: 0.04,
+					duration: 1.25, ease: 'power4.inOut', stagger: 0.04,
 				}, 1);
 			});
 			if (bottom) tl.to(bottom, { opacity: 1, y: 0, duration: 1, ease: 'power4.inOut' }, '-=0.9');
+			const header = document.querySelector('[data-site-header]');
+			if (header) tl.to(header, { opacity: 1, y: 0, duration: 1, ease: 'power4.inOut' }, '<');
+			this._heroTl = tl;
 		};
-		document.fonts && document.fonts.ready ? document.fonts.ready.then(run) : run();
+		const kickoff = () => {
+			document.fonts && document.fonts.ready ? document.fonts.ready.then(firstRun) : firstRun();
+		};
+		if (window.__logodotsStartFired) kickoff();
+		else window.addEventListener('logodots:start', kickoff, { once: true });
+		let rTimer;
+		let lastW = window.innerWidth;
+		window.addEventListener('resize', () => {
+			const w = window.innerWidth;
+			if (Math.abs(w - lastW) < 40) return;
+			lastW = w;
+			clearTimeout(rTimer);
+			rTimer = setTimeout(rerun, 200);
+		});
 	}
 }">
 	<div class="container">
@@ -4109,13 +4162,13 @@ they&#039;re trends.
 										<span
 											class="transition-transform duration-500 ease-(--easing) group-hover/button:-translate-y-full"
 										>
-											WHY WQF
+											WHY CMDOSS
 										</span>
 										<span
 											class="absolute inset-0 translate-y-full transition-transform duration-500 ease-(--easing) group-hover/button:translate-y-0"
 											aria-hidden="true"
 										>
-											WHY WQF
+											WHY CMDOSS
 										</span>
 									</div>
 								</a>

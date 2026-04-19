@@ -1,0 +1,44 @@
+/* CommandOSS fonts — Saans Mono (dev only; swap for free alternative before shipping). */
+@font-face {
+  font-display: swap;
+  font-family: 'saans';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/SaansMono-Medium.woff2') format('woff2');
+}
+
+/* Apply Saans to nav + hero elements so the loader + rest of page share typography. */
+.p2-mono,
+.p3-mono,
+[data-commandoss-brand],
+[data-commandoss-brand] span,
+.hero-title--left,
+.hero-title--right {
+  font-family: 'saans', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* CommandOSS color palette — overrides WQF tokens from main.min.css.
+   Loaded AFTER main.min.css so these definitions win the cascade.
+   Keeps the same token names so every layout-dependent style keeps working. */
+:root {
+  /* Near-blacks / surfaces — cool blue undertone */
+  --color-rich-carbon: #0a0e1a;   /* primary dark bg */
+  --color-core-black: #050814;    /* deepest bg (modals, footer) */
+  --color-urban-smoke: #141a2b;   /* elevated surfaces, scrolled nav, cards */
+
+  /* Off-whites — cool tint for consistency with dark palette */
+  --color-neural-fog: #e8ecf5;    /* primary light text / light-mode bg */
+  --color-off-white: #f0f3f9;     /* secondary light */
+  --color-white-flash: #ffffff;   /* max highlight */
+
+  /* Muted gray — cool undertone */
+  --color-pulse-ash: #6b7590;     /* muted text, borders, dividers */
+
+  /* Brand + accent — swaps WQF's teal/orange for CommandOSS blue family */
+  --color-electric-teal: #1745ce; /* brand primary (used sparingly in WQF) */
+  --color-infrared: #7c9dff;      /* CTA / highlight — pale brand-blue tint, matches hero dots */
+
+  /* Form states */
+  --color-validation-green-dark: #3fb98b;
+  --color-validation-red: #e34b4b;
+}
