@@ -15,6 +15,13 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
 <html lang="en">
   <head>
     <style is:global>
+      @font-face {
+        font-family: 'Roc Grotesk';
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+        src: url('/assets/roc-grotesk-black.woff2') format('woff2');
+      }
       [data-commandoss-brand] {
         transition: width 600ms cubic-bezier(0.65, 0, 0.35, 1);
       }
@@ -72,6 +79,11 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
       }
     </style>
     <script is:inline>
+      // Force scroll to top on reload so the hero animation + loader always play from the top.
+      // Browsers default to restoring the previous scroll position; override that.
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+      window.addEventListener("beforeunload", () => window.scrollTo(0, 0));
       // Enable loader lock + pre-reveal ASAP (before any CSS paints)
       document.documentElement.classList.add("loader-active", "pre-reveal");
       document.addEventListener("DOMContentLoaded", () => {

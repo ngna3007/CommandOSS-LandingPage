@@ -42,9 +42,8 @@
       </div>
       <div class="flex flex-col items-start">
         <p class="p1 border-rich-carbon/20 mb-[24px] border-t pt-[20px] md:mb-[32px]">
-          CommandOSS is a co-located engineering team in Ho Chi Minh City. We work
-          directly with the Mysten Labs core team to ship products across the Mysten
-          stack.
+          We ship products across the Web3 and Web2 stack. Velocity at the core.
+          Quality that holds.
         </p>
 
         <button
@@ -161,52 +160,27 @@
         @mouseleave="activeCard = null"
       >
         <div
-          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-rich-carbon text-neural-fog"
+          class="relative h-full w-full min-h-[420px] overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:min-h-[500px] md:w-[125%] md:group-[.-active]/card:w-full text-neural-fog"
           id="ethos-card-1"
+          style="background-image: url('/assets/bg-1.avif'); background-size: cover; background-position: center;"
         >
-          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+          <div class="relative flex size-full justify-between pt-[40px] pb-[20px] md:py-[40px]">
             <div
-              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+              class="flex w-full flex-col items-start gap-[22px] px-[20px] text-left md:max-w-[300px] md:shrink-0 md:gap-[44px]"
             >
               <button
-                class="hidden md:block"
+                class="hidden text-left md:block"
                 @click="activeCard = 1"
                 :aria-expanded="(activeCard === 1).toString()"
                 :aria-controls="`ethos-card-1`"
               >
-                <h3
-                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
-                  x-data="splitTextReveal()"
-                >
-                  Forged, not hired
-                </h3>
+                <h3 class="md:h5 h4 max-w-[290px] font-roc-grotesk font-black uppercase">Forged, not hired</h3>
               </button>
-              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
-                Forged, not hired
-              </h3>
-              <picture class="size-full max-h-[300px]">
-                <source
-                  media="(-webkit-min-device-pixel-ratio: 1.5)"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 800w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 4000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                />
-                <img
-                  class="size-full object-contain object-center"
-                  src="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 600w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 900w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 2000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                  width="2000"
-                  height="2985.07"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-              <div class="p2-mono flex flex-col gap-[15px]">
-                <p>01 / 04</p>
+              <h3 class="h4 md:h5 max-w-[290px] font-roc-grotesk font-black uppercase md:hidden">Forged, not hired</h3>
+              <div class="p2-mono mt-auto flex flex-col gap-[15px]">
+                <p><span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">01 / 04</span></p>
                 <p class="text-pretty">
-                  Every engineer on the team has earned their seat by putting real work
-                  on-chain.
+                  <span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">Every engineer on the team has earned their seat by putting real work on-chain.</span>
                 </p>
               </div>
             </div>
@@ -221,52 +195,27 @@
         @mouseleave="activeCard = null"
       >
         <div
-          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-electric-teal"
+          class="relative h-full w-full min-h-[420px] overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:min-h-[500px] md:w-[125%] md:group-[.-active]/card:w-full text-neural-fog"
           id="ethos-card-2"
+          style="background-image: url('/assets/bg-2.avif'); background-size: cover; background-position: center;"
         >
-          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+          <div class="relative flex size-full justify-between pt-[40px] pb-[20px] md:py-[40px]">
             <div
-              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+              class="flex w-full flex-col items-start gap-[22px] px-[20px] text-left md:max-w-[300px] md:shrink-0 md:gap-[44px]"
             >
               <button
-                class="hidden md:block"
+                class="hidden text-left md:block"
                 @click="activeCard = 2"
                 :aria-expanded="(activeCard === 2).toString()"
                 :aria-controls="`ethos-card-2`"
               >
-                <h3
-                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
-                  x-data="splitTextReveal()"
-                >
-                  Hacker-house velocity
-                </h3>
+                <h3 class="md:h5 h4 max-w-[290px] font-roc-grotesk font-black uppercase">Hacker-house velocity</h3>
               </button>
-              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
-                Hacker-house velocity
-              </h3>
-              <picture class="size-full max-h-[300px]">
-                <source
-                  media="(-webkit-min-device-pixel-ratio: 1.5)"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 800w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 4000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                />
-                <img
-                  class="size-full object-contain object-center"
-                  src="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 600w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 900w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 2000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                  width="2000"
-                  height="2666.67"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-              <div class="p2-mono flex flex-col gap-[15px]">
-                <p>02 / 04</p>
+              <h3 class="h4 md:h5 max-w-[290px] font-roc-grotesk font-black uppercase md:hidden">Hacker-house velocity</h3>
+              <div class="p2-mono mt-auto flex flex-col gap-[15px]">
+                <p><span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">02 / 04</span></p>
                 <p class="text-pretty">
-                  A co-located team in Ho Chi Minh City. Synchronous by default. Decisions
-                  made in the room, not across timezones.
+                  <span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">A co-located team in Ho Chi Minh City. Synchronous by default. Decisions made in the room, not across timezones.</span>
                 </p>
               </div>
             </div>
@@ -281,52 +230,27 @@
         @mouseleave="activeCard = null"
       >
         <div
-          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-infrared"
+          class="relative h-full w-full min-h-[420px] overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:min-h-[500px] md:w-[125%] md:group-[.-active]/card:w-full text-neural-fog"
           id="ethos-card-3"
+          style="background-color: #000; background-image: url('/assets/bg-3.png'); background-size: contain; background-position: center 90%; background-repeat: no-repeat;"
         >
-          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+          <div class="relative flex size-full justify-between pt-[40px] pb-[20px] md:py-[40px]">
             <div
-              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+              class="flex w-full flex-col items-start gap-[22px] px-[20px] text-left md:max-w-[300px] md:shrink-0 md:gap-[44px]"
             >
               <button
-                class="hidden md:block"
+                class="hidden text-left md:block"
                 @click="activeCard = 3"
                 :aria-expanded="(activeCard === 3).toString()"
                 :aria-controls="`ethos-card-3`"
               >
-                <h3
-                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
-                  x-data="splitTextReveal()"
-                >
-                  Direct Mysten collaboration
-                </h3>
+                <h3 class="md:h5 h4 max-w-[290px] font-roc-grotesk font-black uppercase">Direct Mysten collaboration</h3>
               </button>
-              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
-                Direct Mysten collaboration
-              </h3>
-              <picture class="size-full max-h-[300px]">
-                <source
-                  media="(-webkit-min-device-pixel-ratio: 1.5)"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 800w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 4000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                />
-                <img
-                  class="size-full object-contain object-center"
-                  src="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 600w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 900w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 2000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                  width="2000"
-                  height="2247.19"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-              <div class="p2-mono flex flex-col gap-[15px]">
-                <p>03 / 04</p>
+              <h3 class="h4 md:h5 max-w-[290px] font-roc-grotesk font-black uppercase md:hidden">Direct Mysten collaboration</h3>
+              <div class="p2-mono mt-auto flex flex-col gap-[15px]">
+                <p><span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">03 / 04</span></p>
                 <p class="text-pretty">
-                  We build alongside the Mysten Labs core team — the engineers and
-                  researchers who build Sui itself.
+                  <span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">We build alongside the Mysten Labs core team — the engineers and researchers who build Sui itself.</span>
                 </p>
               </div>
             </div>
@@ -341,52 +265,27 @@
         @mouseleave="activeCard = null"
       >
         <div
-          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-off-white"
+          class="relative h-full w-full min-h-[420px] overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:min-h-[500px] md:w-[125%] md:group-[.-active]/card:w-full text-neural-fog"
           id="ethos-card-4"
+          style="background-image: url('/assets/bg-4.png'); background-size: cover; background-position: center; background-repeat: no-repeat;"
         >
-          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+          <div class="relative flex size-full justify-between pt-[40px] pb-[20px] md:py-[40px]">
             <div
-              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+              class="flex w-full flex-col items-start gap-[22px] px-[20px] text-left md:max-w-[300px] md:shrink-0 md:gap-[44px]"
             >
               <button
-                class="hidden md:block"
+                class="hidden text-left md:block"
                 @click="activeCard = 4"
                 :aria-expanded="(activeCard === 4).toString()"
                 :aria-controls="`ethos-card-4`"
               >
-                <h3
-                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
-                  x-data="splitTextReveal()"
-                >
-                  Open source by default
-                </h3>
+                <h3 class="md:h5 h4 max-w-[290px] font-roc-grotesk font-black uppercase">Open source by default</h3>
               </button>
-              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
-                Open source by default
-              </h3>
-              <picture class="size-full max-h-[300px]">
-                <source
-                  media="(-webkit-min-device-pixel-ratio: 1.5)"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 800w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 4000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                />
-                <img
-                  class="size-full object-contain object-center"
-                  src="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129"
-                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 600w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 900w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 2000w,"
-                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
-                  width="2000"
-                  height="3278.69"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
-              </picture>
-              <div class="p2-mono flex flex-col gap-[15px]">
-                <p>04 / 04</p>
+              <h3 class="h4 md:h5 max-w-[290px] font-roc-grotesk font-black uppercase md:hidden">Open source by default</h3>
+              <div class="p2-mono mt-auto flex flex-col gap-[15px]">
+                <p><span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">04 / 04</span></p>
                 <p class="text-pretty">
-                  We publish repositories, document architecture, and contribute tooling
-                  back to the Sui ecosystem.
+                  <span class="bg-rich-carbon text-neural-fog" style="border-radius: 12px; padding: 0.35em 0.75em; display: inline-block;">We publish repositories, document architecture, and contribute tooling back to the Sui ecosystem.</span>
                 </p>
               </div>
             </div>
