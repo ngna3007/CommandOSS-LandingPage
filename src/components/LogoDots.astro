@@ -3,11 +3,27 @@ interface Props {
   src?: string;
   sampleStep?: number;
   mode?: "tube" | "logo";
+  color?: number | string;
+  rotate?: number;
 }
-const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
+const {
+  src = "/logo.svg",
+  sampleStep = 8,
+  mode = "logo",
+  color,
+  rotate = 0,
+} = Astro.props;
+const colorAttr = color === undefined ? undefined : typeof color === "number" ? `0x${color.toString(16)}` : String(color);
 ---
 
-<div class="logo-dots" data-src={src} data-step={sampleStep} data-mode={mode}>
+<div
+  class="logo-dots"
+  data-src={src}
+  data-step={sampleStep}
+  data-mode={mode}
+  data-color={colorAttr}
+  data-rotate={rotate}
+>
   <canvas></canvas>
 </div>
 
@@ -48,9 +64,9 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     mobilePosition: { x: 4.9, y: -1.6, z: 34 },
     mobileRotation: { x: 0, y: -117, z: 11 },
   };
-  // Fi = dot color — pale tint of brand blue #1745ce, matching OG green's lightness/saturation.
+  // Fi = dot color — clean cyan accent, high contrast on rich-carbon, distinct from brand blue.
   // Vi = scene bg + fog color — near-black with subtle blue undertone (cooler than OG #111111).
-  const Fi = 0x7c9dff,
+  const Fi = 0x22d3ee,
     Wi = 0.4,
     Bi = 170,
     qi = 0,
@@ -164,12 +180,12 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     return { positions, count: pixels.length };
   }
 
-  function makeMaterial() {
+  function makeMaterial(colorHex: number = Fi) {
     return new THREE.ShaderMaterial({
       uniforms: THREE.UniformsUtils.merge([
         THREE.UniformsLib.fog,
         {
-          color: { value: new THREE.Color(Fi) },
+          color: { value: new THREE.Color(colorHex) },
           size: { value: Wi },
           sizeAttenuation: { value: Bi },
         },
@@ -200,11 +216,47 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     });
   }
 
+  // Fog-less, alpha-driven variant for tunnel ghost layers.
+  // Shares the same geometry as the main logo but renders at variable z + opacity.
+  function makeTunnelMaterial(colorHex: number = Fi) {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        color: { value: new THREE.Color(colorHex) },
+        size: { value: Wi },
+        sizeAttenuation: { value: Bi },
+        alpha: { value: 0 },
+      },
+      vertexShader: `
+        uniform float size;
+        uniform float sizeAttenuation;
+        void main() {
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = size * (sizeAttenuation / -mvPosition.z);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 color;
+        uniform float alpha;
+        void main() {
+          vec2 center = gl_PointCoord - vec2(0.5);
+          if (dot(center, center) > 0.25) discard;
+          gl_FragColor = vec4(color, alpha);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+    });
+  }
+
   async function init(root: DotsRoot) {
     const canvas = root.querySelector("canvas") as HTMLCanvasElement;
     const src = root.dataset.src!;
     const step = Number(root.dataset.step) || 4;
     const mode = root.dataset.mode || "logo";
+    const colorRaw = root.dataset.color;
+    const dotColor = colorRaw ? (colorRaw.startsWith("0x") ? parseInt(colorRaw, 16) : parseInt(colorRaw)) : Fi;
+    const rotateZdeg = Number(root.dataset.rotate) || 0;
 
     const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -224,7 +276,7 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     const camera = new THREE.PerspectiveCamera($i, 1, 0.1, 1000);
     camera.position.set(Hi.x, Hi.y, Hi.z);
 
-    const material = makeMaterial();
+    const material = makeMaterial(dotColor);
     const geometry = new THREE.BufferGeometry();
     const points = new THREE.Points(geometry, material);
 
@@ -238,7 +290,8 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
         const r = mobile ? Di.mobileRotation : Di.rotation;
         points.rotation.set(deg(r.x), deg(r.y), deg(r.z));
       } else {
-        points.rotation.set(deg(-6), 0, deg(-4));
+        // Additional CW rotation on screen = negative Z in three.js (right-handed, Y-up).
+        points.rotation.set(deg(-6), 0, deg(-4 - rotateZdeg));
       }
       // Center horizontally and pull closer to camera. OG z=36 worked for the tube because
       // its arc extended toward the camera (parts at z~45). A flat logo at z=36 sits entirely
@@ -246,11 +299,26 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
       if (mode === "tube") {
         points.position.set(p.x, p.y, p.z);
       } else {
-        points.position.set(0.5, 0.4, 42);
+        points.position.set(0, 0.4, 42);
       }
     }
     applyTransform();
     scene.add(points);
+
+    // === Infinite tunnel layers (logo mode only) ===
+    // Ghost copies of the "C" behind the main dots. Each layer loops along the z-axis
+    // from deep → front, fading in/out with a sin-curve alpha. Phases are offset so
+    // the layers are spaced evenly along the tunnel.
+    const TUNNEL_LAYERS = 3;
+    const TUNNEL_LOOP_SEC = 6;
+    const TUNNEL_Z_DEPTH = 14; // how far behind main the tunnel extends
+    const TUNNEL_ALPHA_PEAK = 0.22;
+    const tunnelLayers: Array<{
+      points: THREE.Points;
+      mat: THREE.ShaderMaterial;
+      phaseOffset: number;
+    }> = [];
+    const tunnelEnabled = mode === "logo" && !prefersReducedMotion;
 
     // Build geometry
     let geom: { positions: Float32Array; count: number };
@@ -269,6 +337,17 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     (geometry.attributes.position as THREE.BufferAttribute).setUsage(THREE.DynamicDrawUsage);
     geometry.computeBoundingSphere();
     console.log("[LogoDots]", mode, geom.count, "dots");
+
+    if (tunnelEnabled) {
+      for (let i = 0; i < TUNNEL_LAYERS; i++) {
+        const mat = makeTunnelMaterial(dotColor);
+        const pts = new THREE.Points(geometry, mat);
+        pts.rotation.copy(points.rotation);
+        pts.position.copy(points.position);
+        scene.add(pts);
+        tunnelLayers.push({ points: pts, mat, phaseOffset: i / TUNNEL_LAYERS });
+      }
+    }
 
     // Mouse-deflection buffers — OG Zi()
     const deflectionTarget = new Float32Array(originalPositions.length);
@@ -298,6 +377,9 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     let waveIntensity = 30;
     let spatialBlend = 0;
     let introComplete = false;
+    let tunnelVisibility = 0;
+    let tunnelTime = 0;
+    let lastNow = performance.now();
 
     function startIntro() {
       // Only skip the intro for users who've asked for reduced motion.
@@ -307,6 +389,7 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
         spatialBlend = 1;
         flyInStrength = 0;
         introComplete = true;
+        tunnelVisibility = 1;
         window.dispatchEvent(new CustomEvent("logodots:ready"));
         return;
       }
@@ -347,6 +430,17 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
                 },
               },
             );
+            gsap.to(
+              { v: 0 },
+              {
+                v: 1,
+                duration: 2,
+                ease: "power2.inOut",
+                onUpdate() {
+                  tunnelVisibility = (this.targets()[0] as any).v;
+                },
+              },
+            );
           },
         },
       );
@@ -365,13 +459,18 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
     if ((window as any).__logodotsStartFired) triggerIntro();
 
     function onResize() {
-      renderer.setSize(window.innerWidth, window.innerHeight, false);
-      camera.aspect = window.innerWidth / window.innerHeight;
+      const w = root.clientWidth || window.innerWidth;
+      const h = root.clientHeight || window.innerHeight;
+      if (w === 0 || h === 0) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
       applyTransform();
     }
     onResize();
     window.addEventListener("resize", onResize);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(onResize) : null;
+    ro?.observe(root);
 
     function onMouseMove(e: PointerEvent) {
       const rect = canvas.getBoundingClientRect();
@@ -444,6 +543,27 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
         }
       }
       (geometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
+
+      // Tunnel layers: each loops z = [main.z - TUNNEL_Z_DEPTH → main.z] with sin-curve alpha.
+      if (tunnelLayers.length > 0 && tunnelVisibility > 0.001) {
+        const now = performance.now();
+        const dt = Math.min(0.05, (now - lastNow) / 1000);
+        lastNow = now;
+        tunnelTime = (tunnelTime + dt / TUNNEL_LOOP_SEC) % 1;
+        const mainZ = points.position.z;
+        for (const { points: p, mat, phaseOffset } of tunnelLayers) {
+          const phase = (tunnelTime + phaseOffset) % 1;
+          p.position.x = points.position.x;
+          p.position.y = points.position.y;
+          p.position.z = mainZ - TUNNEL_Z_DEPTH + phase * TUNNEL_Z_DEPTH;
+          p.rotation.copy(points.rotation);
+          const a = TUNNEL_ALPHA_PEAK * Math.sin(phase * Math.PI) * tunnelVisibility;
+          mat.uniforms.alpha.value = a;
+        }
+      } else {
+        lastNow = performance.now();
+      }
+
       renderer.render(scene, camera);
     };
     tick();
@@ -453,6 +573,8 @@ const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("pointermove", onMouseMove);
+      ro?.disconnect();
+      for (const { mat } of tunnelLayers) mat.dispose();
       geometry.dispose();
       material.dispose();
       renderer.dispose();

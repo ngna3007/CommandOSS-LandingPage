@@ -1,4 +1,5 @@
 ---
+
 ---
 
 <div
@@ -10,9 +11,8 @@
   x-data="{
 		open: false,
 		words: null,
-		rectangleAfterWordIndex: parseInt(2 - 1),
 		init() {
-			const title = 'Talk to the CommandOSS team.';
+			const title = 'Ping CommandOSS.';
 			
 			this.words = title.split(' ');
 			this.$watch('open', (value) => {
@@ -76,15 +76,7 @@
           class="h2 flex flex-wrap gap-x-[0.3ch] uppercase [&>span>span]:inline-block"
         >
           <template x-for="(word, index) in words" :key="index">
-            <span class="contents">
-              <span x-text="word"></span>
-              <div
-                class="-mt-[0.075ch] h-[1.5ch] w-[4ch] shrink-0 bg-cover"
-                style="background-image: url('https://worldquant-foundry.transforms.svdcdn.com/production/images/contact-image.jpg?w=242&h=94&auto=compress%2Cformat&fit=crop&dm=1770363192&s=95e83cb83dec4fb667faecc1ff4cbef5'); background-position: 50% 50%;"
-                x-show="index === rectangleAfterWordIndex"
-              >
-              </div>
-            </span>
+            <span x-text="word"></span>
           </template>
         </h2>
         <div class="fui-i">
@@ -135,8 +127,7 @@
                         aria-describedby="fui-contact-gxuiyq-fields-imA-instructions"
                       >
                         <legend class="fui-legend" data-field-label
-                          >I'm a&nbsp;<span class="fui-required" aria-hidden="true">*</span
-                          ></legend
+                          >I'm a&nbsp;<span class="fui-required" aria-hidden="true">*</span></legend
                         ><div
                           id="fui-contact-gxuiyq-fields-imA-instructions"
                           class="fui-instructions"
@@ -195,8 +186,7 @@
                                 data-fui-id="contact-imA-journalist-3"
                               /><label
                                 class="fui-radio-label"
-                                for="fui-contact-gxuiyq-fields-imA-journalist-3"
-                                >Journalist</label
+                                for="fui-contact-gxuiyq-fields-imA-journalist-3">Journalist</label
                               >
                             </div><div class="fui-radio">
                               <input
@@ -240,9 +230,8 @@
                                       class="fui-label"
                                       for="fui-contact-gxuiyq-fields-aboutYou-firstName"
                                       data-field-label
-                                      >First name&nbsp;<span
-                                        class="fui-required"
-                                        aria-hidden="true">*</span
+                                      >First name&nbsp;<span class="fui-required" aria-hidden="true"
+                                        >*</span
                                       ></label
                                     ><div class="fui-input-wrapper">
                                       <input
@@ -267,9 +256,8 @@
                                       class="fui-label"
                                       for="fui-contact-gxuiyq-fields-aboutYou-lastName"
                                       data-field-label
-                                      >Last name&nbsp;<span
-                                        class="fui-required"
-                                        aria-hidden="true">*</span
+                                      >Last name&nbsp;<span class="fui-required" aria-hidden="true"
+                                        >*</span
                                       ></label
                                     ><div class="fui-input-wrapper">
                                       <input
@@ -296,9 +284,8 @@
                                       class="fui-label"
                                       for="fui-contact-gxuiyq-fields-aboutYou-emailAddress"
                                       data-field-label
-                                      >Email&nbsp;<span
-                                        class="fui-required"
-                                        aria-hidden="true">*</span
+                                      >Email&nbsp;<span class="fui-required" aria-hidden="true"
+                                        >*</span
                                       ></label
                                     ><div class="fui-input-wrapper">
                                       <input
@@ -326,9 +313,8 @@
                                       class="fui-label"
                                       for="fui-contact-gxuiyq-fields-aboutYou-phone"
                                       data-field-label
-                                      >Phone&nbsp;<span
-                                        class="fui-required"
-                                        aria-hidden="true">*</span
+                                      >Phone&nbsp;<span class="fui-required" aria-hidden="true"
+                                        >*</span
                                       ></label
                                     ><div class="fui-input-wrapper">
                                       <input
@@ -585,9 +571,7 @@
   </div>
 </div>
 
-<div
-  class="bg-rich-carbon loader fixed inset-0 isolate z-50 flex items-center justify-center"
->
+<div class="bg-rich-carbon loader fixed inset-0 isolate z-50 flex items-center justify-center">
   <div class="loader--logo relative isolate w-[120px] md:w-[248px]">
     <svg
       class="w-full h-auto text-core-black"
