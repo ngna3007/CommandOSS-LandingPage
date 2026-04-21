@@ -2,9 +2,9 @@
 interface Props {
   src?: string;
   sampleStep?: number;
-  mode?: 'tube' | 'logo';
+  mode?: "tube" | "logo";
 }
-const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
+const { src = "/logo.svg", sampleStep = 8, mode = "logo" } = Astro.props;
 ---
 
 <div class="logo-dots" data-src={src} data-step={sampleStep} data-mode={mode}>
@@ -12,28 +12,50 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
 </div>
 
 <style>
-  .logo-dots { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-  .logo-dots canvas { display: block; width: 100%; height: 100%; }
+  .logo-dots {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .logo-dots canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 </style>
 
 <script>
-  import * as THREE from 'three';
-  import { gsap } from 'gsap';
+  import * as THREE from "three";
+  import { gsap } from "gsap";
 
   // === OG constants — verbatim from main.min.js ===
-  const Li = 0.01, ji = 0.015, Ni = 0.02;
+  const Li = 0.01,
+    ji = 0.015,
+    Ni = 0.02;
   const Hi = { x: 0, y: 0, z: 50 };
   const $i = 60;
   const Di = {
-    radius: 1.5, tubularSegments: 60, radialSegments: 60, arcHeight: 0, arcLength: 22,
-    position:       { x: 4.9, y: -1.6, z: 36 },
-    rotation:       { x: 0,   y: -117, z: 11 },
+    radius: 1.5,
+    tubularSegments: 60,
+    radialSegments: 60,
+    arcHeight: 0,
+    arcLength: 22,
+    position: { x: 4.9, y: -1.6, z: 36 },
+    rotation: { x: 0, y: -117, z: 11 },
     mobilePosition: { x: 4.9, y: -1.6, z: 34 },
-    mobileRotation: { x: 0,   y: -117, z: 11 },
+    mobileRotation: { x: 0, y: -117, z: 11 },
   };
   // Fi = dot color — pale tint of brand blue #1745ce, matching OG green's lightness/saturation.
   // Vi = scene bg + fog color — near-black with subtle blue undertone (cooler than OG #111111).
-  const Fi = 0x7c9dff, Wi = 0.4, Bi = 170, qi = 0, Ui = 15, Vi = 0x0a0e1a;
+  const Fi = 0x7c9dff,
+    Wi = 0.4,
+    Bi = 170,
+    qi = 0,
+    Ui = 15,
+    Vi = 0x0a0e1a;
 
   // OG Xi / Gi / Ki helpers — verbatim
   function Xi(t: number, e: number, n: number, i: boolean) {
@@ -48,14 +70,15 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     };
   }
   function Ki(
-    out: Float32Array, idx: number,
+    out: Float32Array,
+    idx: number,
     orig: Float32Array,
     off: { x: number; y: number; z: number },
     intensity: number,
     deflection: Float32Array,
     isTouch: boolean,
   ) {
-    out[idx]     = orig[idx]     + off.x * intensity + (isTouch ? 0 : deflection[idx]);
+    out[idx] = orig[idx] + off.x * intensity + (isTouch ? 0 : deflection[idx]);
     out[idx + 1] = orig[idx + 1] + off.y * intensity + (isTouch ? 0 : deflection[idx + 1]);
     out[idx + 2] = orig[idx + 2] + off.z * intensity + (isTouch ? 0 : deflection[idx + 2]);
   }
@@ -71,7 +94,13 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       new THREE.Vector3(0, Di.arcHeight, 0),
       new THREE.Vector3(Di.arcLength / 2, 0, 0),
     );
-    const tube = new THREE.TubeGeometry(curve, Di.tubularSegments, Di.radius, Di.radialSegments, false);
+    const tube = new THREE.TubeGeometry(
+      curve,
+      Di.tubularSegments,
+      Di.radius,
+      Di.radialSegments,
+      false,
+    );
     const positions = (tube.attributes.position.array as Float32Array).slice();
     tube.dispose();
     return { positions, count: positions.length / 3 };
@@ -80,18 +109,18 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
   async function buildLogoGeometry(svgUrl: string, step: number) {
     const res = await fetch(svgUrl);
     const svgText = await res.text();
-    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const blob = new Blob([svgText], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const img = new Image();
-    img.decoding = 'async';
+    img.decoding = "async";
     img.src = url;
     await img.decode();
 
     const rasterSize = 512;
-    const off = document.createElement('canvas');
+    const off = document.createElement("canvas");
     off.width = rasterSize;
     off.height = rasterSize;
-    const ctx = off.getContext('2d', { willReadFrequently: true })!;
+    const ctx = off.getContext("2d", { willReadFrequently: true })!;
     const scale = Math.min(rasterSize / img.width, rasterSize / img.height);
     const w = img.width * scale;
     const h = img.height * scale;
@@ -105,12 +134,17 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
         if (data[(y * rasterSize + x) * 4 + 3] > 128) pixels.push([x, y]);
       }
     }
-    if (!pixels.length) throw new Error('No pixels sampled');
+    if (!pixels.length) throw new Error("No pixels sampled");
 
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
     for (const [x, y] of pixels) {
-      if (x < minX) minX = x; if (x > maxX) maxX = x;
-      if (y < minY) minY = y; if (y > maxY) maxY = y;
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
+      if (y < minY) minY = y;
+      if (y > maxY) maxY = y;
     }
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
@@ -123,7 +157,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     const positions = new Float32Array(pixels.length * 3);
     for (let i = 0; i < pixels.length; i++) {
       const [px, py] = pixels[i];
-      positions[i * 3]     = (px - cx) * pxToWorld;
+      positions[i * 3] = (px - cx) * pxToWorld;
       positions[i * 3 + 1] = -(py - cy) * pxToWorld;
       positions[i * 3 + 2] = 0;
     }
@@ -167,17 +201,19 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
   }
 
   async function init(root: DotsRoot) {
-    const canvas = root.querySelector('canvas') as HTMLCanvasElement;
+    const canvas = root.querySelector("canvas") as HTMLCanvasElement;
     const src = root.dataset.src!;
     const step = Number(root.dataset.step) || 4;
-    const mode = root.dataset.mode || 'logo';
+    const mode = root.dataset.mode || "logo";
 
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Scene setup — matches OG tr()
     const renderer = new THREE.WebGLRenderer({
-      canvas, antialias: false, powerPreference: 'high-performance',
+      canvas,
+      antialias: false,
+      powerPreference: "high-performance",
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(Vi, 1);
@@ -198,7 +234,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       // For the logo, keep OG position but drop the -117° Y rotation (was calibrated for a
       // horizontal arc, not a square logo — it made the "C" edge-on).
       // Small tilt keeps the 3D feel without losing readability.
-      if (mode === 'tube') {
+      if (mode === "tube") {
         const r = mobile ? Di.mobileRotation : Di.rotation;
         points.rotation.set(deg(r.x), deg(r.y), deg(r.z));
       } else {
@@ -207,7 +243,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       // Center horizontally and pull closer to camera. OG z=36 worked for the tube because
       // its arc extended toward the camera (parts at z~45). A flat logo at z=36 sits entirely
       // inside the fog (far=15, camera at z=50 → dot is 14 units away, almost fully fogged).
-      if (mode === 'tube') {
+      if (mode === "tube") {
         points.position.set(p.x, p.y, p.z);
       } else {
         points.position.set(0.5, 0.4, 42);
@@ -219,11 +255,9 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     // Build geometry
     let geom: { positions: Float32Array; count: number };
     try {
-      geom = mode === 'tube'
-        ? await buildTubeGeometry()
-        : await buildLogoGeometry(src, step);
+      geom = mode === "tube" ? await buildTubeGeometry() : await buildLogoGeometry(src, step);
     } catch (err) {
-      console.error('[LogoDots] geometry build failed:', err);
+      console.error("[LogoDots] geometry build failed:", err);
       return;
     }
     if (root.__disposed) return;
@@ -231,10 +265,10 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     const originalPositions = geom.positions;
     const livePositions = new Float32Array(originalPositions.length);
     livePositions.set(originalPositions);
-    geometry.setAttribute('position', new THREE.BufferAttribute(livePositions, 3));
+    geometry.setAttribute("position", new THREE.BufferAttribute(livePositions, 3));
     (geometry.attributes.position as THREE.BufferAttribute).setUsage(THREE.DynamicDrawUsage);
     geometry.computeBoundingSphere();
-    console.log('[LogoDots]', mode, geom.count, 'dots');
+    console.log("[LogoDots]", mode, geom.count, "dots");
 
     // Mouse-deflection buffers — OG Zi()
     const deflectionTarget = new Float32Array(originalPositions.length);
@@ -248,10 +282,11 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     const flyInDirs = new Float32Array(originalPositions.length);
     for (let g = 0; g < originalPositions.length; g += 3) {
       // Random direction on a unit sphere (uniformly distributed)
-      const u = Math.random(), v = Math.random();
+      const u = Math.random(),
+        v = Math.random();
       const theta = 2 * Math.PI * u;
       const phi = Math.acos(2 * v - 1);
-      flyInDirs[g]     = Math.sin(phi) * Math.cos(theta);
+      flyInDirs[g] = Math.sin(phi) * Math.cos(theta);
       flyInDirs[g + 1] = Math.sin(phi) * Math.sin(theta);
       flyInDirs[g + 2] = Math.cos(phi);
     }
@@ -272,28 +307,49 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
         spatialBlend = 1;
         flyInStrength = 0;
         introComplete = true;
-        window.dispatchEvent(new CustomEvent('logodots:ready'));
+        window.dispatchEvent(new CustomEvent("logodots:ready"));
         return;
       }
       // Fly-in: dots stream from off-screen to their home position over 1.4s
-      gsap.to({ v: 1 }, {
-        v: 0, duration: 1.4, ease: 'power3.out',
-        onUpdate() { flyInStrength = (this.targets()[0] as any).v; },
-      });
-      gsap.to({ v: waveIntensity }, {
-        v: 0.02, duration: 2, ease: 'power3.inOut',
-        onUpdate() { waveIntensity = (this.targets()[0] as any).v; },
-        onComplete() {
-          introComplete = true;
-          gsap.to({ v: 0 }, {
-            v: 1, duration: 1.5, ease: 'power2.inOut',
-            onUpdate() { spatialBlend = (this.targets()[0] as any).v; },
-            onComplete() {
-              window.dispatchEvent(new CustomEvent('logodots:ready'));
-            },
-          });
+      gsap.to(
+        { v: 1 },
+        {
+          v: 0,
+          duration: 1.4,
+          ease: "power3.out",
+          onUpdate() {
+            flyInStrength = (this.targets()[0] as any).v;
+          },
         },
-      });
+      );
+      gsap.to(
+        { v: waveIntensity },
+        {
+          v: 0.02,
+          duration: 2,
+          ease: "power3.inOut",
+          onUpdate() {
+            waveIntensity = (this.targets()[0] as any).v;
+          },
+          onComplete() {
+            introComplete = true;
+            gsap.to(
+              { v: 0 },
+              {
+                v: 1,
+                duration: 1.5,
+                ease: "power2.inOut",
+                onUpdate() {
+                  spatialBlend = (this.targets()[0] as any).v;
+                },
+                onComplete() {
+                  window.dispatchEvent(new CustomEvent("logodots:ready"));
+                },
+              },
+            );
+          },
+        },
+      );
     }
 
     // Wait for loader to finish before starting the intro.
@@ -304,7 +360,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       introStarted = true;
       startIntro();
     }
-    window.addEventListener('logodots:start', triggerIntro, { once: true });
+    window.addEventListener("logodots:start", triggerIntro, { once: true });
     // If the loader has already dispatched the event before this component mounted, catch it.
     if ((window as any).__logodotsStartFired) triggerIntro();
 
@@ -315,14 +371,14 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
       applyTransform();
     }
     onResize();
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
 
     function onMouseMove(e: PointerEvent) {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
       mouse.y = e.clientY - rect.top;
     }
-    window.addEventListener('pointermove', onMouseMove);
+    window.addEventListener("pointermove", onMouseMove);
 
     // Animation loop — mirrors OG updateWavePositions
     let time = 0;
@@ -351,7 +407,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
           if (dist < 125) {
             const w = 1 - dist / 125;
             const a = Math.atan2(dy, dx);
-            deflectionTarget[f]     = -Math.cos(a) * w * 1.5;
+            deflectionTarget[f] = -Math.cos(a) * w * 1.5;
             deflectionTarget[f + 1] = -Math.sin(a) * w * 1.5;
             deflectionTarget[f + 2] = 1.5 * w * 0.5;
           } else {
@@ -360,7 +416,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
             deflectionTarget[f + 2] = 0;
           }
           // Smooth lerp
-          deflectionCurrent[f]     += 0.1 * (deflectionTarget[f]     - deflectionCurrent[f]);
+          deflectionCurrent[f] += 0.1 * (deflectionTarget[f] - deflectionCurrent[f]);
           deflectionCurrent[f + 1] += 0.1 * (deflectionTarget[f + 1] - deflectionCurrent[f + 1]);
           deflectionCurrent[f + 2] += 0.1 * (deflectionTarget[f + 2] - deflectionCurrent[f + 2]);
         }
@@ -382,7 +438,7 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
         Ki(livePositions, g, originalPositions, blended, waveIntensity, deflectionCurrent, isTouch);
         // Additive fly-in displacement — each dot enters from its random direction
         if (flyScale > 0.01) {
-          livePositions[g]     += flyInDirs[g]     * flyScale;
+          livePositions[g] += flyInDirs[g] * flyScale;
           livePositions[g + 1] += flyInDirs[g + 1] * flyScale;
           livePositions[g + 2] += flyInDirs[g + 2] * flyScale;
         }
@@ -395,14 +451,14 @@ const { src = '/logo.svg', sampleStep = 8, mode = 'logo' } = Astro.props;
     const cleanup = () => {
       root.__disposed = true;
       cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("pointermove", onMouseMove);
       geometry.dispose();
       material.dispose();
       renderer.dispose();
     };
-    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    document.addEventListener("astro:before-swap", cleanup, { once: true });
   }
 
-  document.querySelectorAll<HTMLElement>('.logo-dots').forEach((el) => init(el as DotsRoot));
+  document.querySelectorAll<HTMLElement>(".logo-dots").forEach((el) => init(el as DotsRoot));
 </script>

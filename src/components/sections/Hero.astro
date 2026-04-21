@@ -1,0 +1,224 @@
+---
+import LogoDots from "../LogoDots.astro";
+---
+
+<section
+  class="relative overflow-hidden"
+  x-data="{
+	init() {
+		const groupByRow = (els) => {
+			const map = new Map();
+			els.forEach(el => {
+				const top = Math.round(el.getBoundingClientRect().top);
+				if (!map.has(top)) map.set(top, []);
+				map.get(top).push(el);
+			});
+			return Array.from(map.values());
+		};
+		const firstRun = () => this._heroRun(1.2);
+		const rerun = () => this._heroRun(0);
+		this._heroRun = (delay) => {
+			if (typeof gsap === 'undefined') { requestAnimationFrame(rerun); return; }
+			if (this._heroTl) this._heroTl.kill();
+			const container = this.$refs.container;
+			if (!container) return;
+			const leftEls = Array.from(container.querySelectorAll('.hero-title--left'));
+			const rightEls = Array.from(container.querySelectorAll('.hero-title--right'));
+			const allTitles = [...leftEls, ...rightEls];
+			const bottom = this.$refs.bottom_content;
+			gsap.set(allTitles, { x: 0, clearProps: 'clipPath,transform' });
+			if (bottom) gsap.set(bottom, { opacity: 0, y: 20 });
+			const headerEl = document.querySelector('[data-site-header]');
+			if (headerEl) gsap.set(headerEl, { opacity: 0, y: 20 });
+			const leftRows = groupByRow(leftEls);
+			const rightRows = groupByRow(rightEls);
+			const box = container.getBoundingClientRect();
+			const boxLeft = box.left;
+			const boxRight = box.right;
+			const tl = gsap.timeline({ delay });
+			tl.from(allTitles, { css: { clipPath: 'inset(100% 0 0 0)', translateY: '-48px' }, duration: 1.4, ease: 'power3.inOut' });
+			leftRows.forEach(row => {
+				tl.to(row, {
+					x: (i, el) => {
+						const r = el.getBoundingClientRect();
+						let cum = 0;
+						for (let s = 0; s < i; s++) {
+							const prev = row[s].getBoundingClientRect();
+							cum += prev.width + 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
+						}
+						return boxLeft + cum - r.left;
+					},
+					duration: 1.25, ease: 'power4.inOut', stagger: 0.04,
+				}, 1);
+			});
+			rightRows.forEach(row => {
+				tl.to([...row].reverse(), {
+					x: (i, el) => {
+						const r = el.getBoundingClientRect();
+						const idxFromEnd = row.length - 1 - i;
+						let cum = 0;
+						for (let s = row.length - 1; s > idxFromEnd; s--) {
+							const prev = row[s].getBoundingClientRect();
+							cum += prev.width + 0.25 * parseFloat(getComputedStyle(row[s]).fontSize);
+						}
+						return boxRight - r.width - cum - r.left;
+					},
+					duration: 1.25, ease: 'power4.inOut', stagger: 0.04,
+				}, 1);
+			});
+			if (bottom) tl.to(bottom, { opacity: 1, y: 0, duration: 1, ease: 'power4.inOut' }, '-=0.9');
+			const header = document.querySelector('[data-site-header]');
+			if (header) tl.to(header, { opacity: 1, y: 0, duration: 1, ease: 'power4.inOut' }, '<');
+			this._heroTl = tl;
+		};
+		const kickoff = () => {
+			document.fonts && document.fonts.ready ? document.fonts.ready.then(firstRun) : firstRun();
+		};
+		if (window.__logodotsStartFired) kickoff();
+		else window.addEventListener('logodots:start', kickoff, { once: true });
+		let rTimer;
+		let lastW = window.innerWidth;
+		window.addEventListener('resize', () => {
+			const w = window.innerWidth;
+			if (Math.abs(w - lastW) < 40) return;
+			lastW = w;
+			clearTimeout(rTimer);
+			rTimer = setTimeout(rerun, 200);
+		});
+	}
+}"
+>
+  <div class="container">
+    <div
+      class="flex h-dvh min-h-[550px] flex-col justify-between gap-[40px] md:gap-[40px]"
+    >
+      <div class="hidden grow basis-0 md:block"></div>
+      <div
+        class="relative isolate flex w-full grow justify-center pt-(--header-height) max-md:items-center md:grow-0 md:pt-0"
+        x-ref="container"
+      >
+        <h1 class="h2 max-w-[800px] text-center leading-none uppercase" data-speed="1.1">
+          <span class="hero-title--left">Building</span>
+          <br class="md:hidden" />
+          <span class="hero-title--left">On</span>
+          <br />
+          <span class="hero-title--left">Sui</span>
+          <br class="md:hidden" />
+          <span class="hero-title--right mt-[64px] md:mt-0">At</span>
+          <span class="hero-title--right">Full</span>
+          <br />
+          <span class="hero-title--right">Speed</span>
+        </h1>
+      </div>
+      <div
+        class="p3-mono text-off-white/60 mt-auto flex flex-col justify-end gap-[6px] pb-[24px] md:mt-0 md:grow md:basis-0 md:pb-[30px]"
+        x-ref="bottom_content"
+      >
+        <div
+          class="border-off-white/20 flex w-full flex-col-reverse gap-[24px] border-t pt-[20px] md:flex-row"
+        >
+          <div class="flex items-center justify-between md:w-[30%] xl:w-[50%]">
+            <button
+              class="group/button hover:animate-glitch-hover relative isolate motion-reduce:hover:animate-none"
+              data-theme="light"
+              aria-label=""
+              @click="$dispatch('contact-modal:open', '#contact')"
+              x-data
+            >
+              <div class="flex h-[40px] items-center justify-center px-[20px]">
+                <div
+                  class="group-data-[theme=light]/button:bg-neural-fog group-data-[theme=dark]/button:bg-rich-carbon motion-reduce:blur-0 button--dot size-[10px] -translate-x-[24px] rounded-[3px] opacity-0 blur-[20px] transition-all duration-400 ease-(--easing) group-hover/button:-translate-x-[5px] group-hover/button:opacity-100 group-hover/button:blur-[0px] group-active/button:-translate-x-[5px] group-active/button:opacity-100 group-active/button:blur-[0px] motion-reduce:hidden motion-reduce:translate-x-0 motion-reduce:opacity-0 motion-reduce:group-hover/button:translate-x-0 motion-reduce:group-hover/button:opacity-0"
+                >
+                </div>
+                <div
+                  class="p2-mono group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon relative isolate flex -translate-x-[5px] overflow-hidden transition-transform duration-400 ease-(--easing) group-hover/button:translate-x-[5px] group-active/button:translate-x-[5px] motion-reduce:translate-x-0 motion-reduce:group-hover/button:translate-x-0"
+                >
+                  <span
+                    class="transition-transform duration-400 ease-(--easing) group-hover/button:-translate-y-full group-active/button:-translate-y-full motion-reduce:translate-y-0 motion-reduce:group-hover/button:translate-y-0"
+                  >
+                    Contact Us
+                  </span>
+                  <span
+                    class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) group-hover/button:translate-y-0 group-active/button:translate-y-0 motion-reduce:hidden"
+                    aria-hidden="true"
+                  >
+                    Contact Us
+                  </span>
+                </div>
+              </div>
+              <svg
+                class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                  stroke="currentColor"></path>
+              </svg>
+              <svg
+                class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                  stroke="currentColor"></path>
+              </svg>
+              <svg
+                class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                  stroke="currentColor"></path>
+              </svg>
+              <svg
+                class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                  stroke="currentColor"></path>
+              </svg>
+            </button>
+            <img
+              src="/logo-white.svg"
+              alt=""
+              class="size-[40px] md:hidden"
+              width="40"
+              height="40"
+            />
+          </div>
+          <div class="flex shrink-0 items-start justify-between md:w-[70%] xl:w-[50%]">
+            <p class="md:max-w-[490px]">
+              CommandOSS is Mysten Labs' engineering unit in Vietnam. We build on Sui,
+              alongside the core team behind the protocol.
+            </p>
+            <img
+              src="/logo-white.svg"
+              alt=""
+              class="h-[65px] w-[65px] md:block hidden"
+              width="65"
+              height="65"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <LogoDots />
+</section>

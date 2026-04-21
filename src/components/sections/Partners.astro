@@ -1,0 +1,105 @@
+---
+---
+
+<section
+  id="partners"
+  class="container grid items-center pt-[120px] md:grid-cols-12 md:pt-[300px] md:pb-[280px]"
+>
+  <div class="col-span-12 lg:col-span-4">
+    <div class="flex max-w-[437px] flex-col items-start gap-[35px]">
+      <div class="border-off-white/20 flex flex-col gap-[15px] border-b pb-[15px]">
+        <h2 class="p2-mono md:p1-mono">partners</h2>
+        <h3 class="h5 uppercase" x-data="splitTextReveal()">
+          Partner at the edge of what’s possible
+        </h3>
+      </div>
+      <p class="p1-mono text-off-white/60">
+        Join forces with the ventures that are creating new markets. Partner early,
+        transform fast, own the edge.
+      </p>
+
+      <button
+        class="group/button hover:animate-glitch-hover relative isolate motion-reduce:hover:animate-none"
+        data-theme="light"
+        aria-label=""
+        @click="$dispatch('contact-modal:open', 'partner')"
+        x-data
+      >
+        <div class="flex h-[40px] items-center justify-center px-[20px]">
+          <div
+            class="group-data-[theme=light]/button:bg-neural-fog group-data-[theme=dark]/button:bg-rich-carbon motion-reduce:blur-0 button--dot size-[10px] -translate-x-[24px] rounded-[3px] opacity-0 blur-[20px] transition-all duration-400 ease-(--easing) group-hover/button:-translate-x-[5px] group-hover/button:opacity-100 group-hover/button:blur-[0px] group-active/button:-translate-x-[5px] group-active/button:opacity-100 group-active/button:blur-[0px] motion-reduce:hidden motion-reduce:translate-x-0 motion-reduce:opacity-0 motion-reduce:group-hover/button:translate-x-0 motion-reduce:group-hover/button:opacity-0"
+          >
+          </div>
+          <div
+            class="p2-mono group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon relative isolate flex -translate-x-[5px] overflow-hidden transition-transform duration-400 ease-(--easing) group-hover/button:translate-x-[5px] group-active/button:translate-x-[5px] motion-reduce:translate-x-0 motion-reduce:group-hover/button:translate-x-0"
+          >
+            <span
+              class="transition-transform duration-400 ease-(--easing) group-hover/button:-translate-y-full group-active/button:-translate-y-full motion-reduce:translate-y-0 motion-reduce:group-hover/button:translate-y-0"
+            >
+              partner with us
+            </span>
+            <span
+              class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) group-hover/button:translate-y-0 group-active/button:translate-y-0 motion-reduce:hidden"
+              aria-hidden="true"
+            >
+              partner with us
+            </span>
+          </div>
+        </div>
+        <svg
+          class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="col-span-12 lg:col-span-8">
+    <div class="relative aspect-video w-full" x-data="homePartners">
+      <canvas x-ref="canvas" class="absolute inset-0 size-full"></canvas>
+    </div>
+  </div>
+</section>

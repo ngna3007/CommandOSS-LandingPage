@@ -1,0 +1,536 @@
+---
+---
+
+<div id="focus-industries" class="relative isolate -mt-[2px] overflow-hidden">
+  <div class="absolute inset-0 -z-1 size-full" x-data="focusIndustries">
+    <canvas
+      x-ref="canvas"
+      class="size-full"
+      style="mask-image: linear-gradient(0deg, transparent 0%, black 20%, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(0deg, transparent 0%, black 20%, black 80%, transparent 100%);"
+    ></canvas>
+  </div>
+
+  <div
+    class="from-neural-fog to-neural-fog pointer-events-none absolute inset-0 z-1 hidden h-screen w-full bg-linear-to-b via-transparent md:block"
+    x-data="{
+					init() {
+						const mm = gsap.matchMedia();
+
+						mm.add('(min-width: 768px)', () => {
+							ScrollTrigger.create({
+								trigger: '#focus-industries',
+								start: 'top top',
+								end: 'bottom top',
+								pin: this.$el,
+								pinSpacing: false,
+								invalidateOnRefresh: true,
+							});
+						});
+					}
+				}"
+  >
+  </div>
+
+  <section
+    id="focus"
+    class="flex h-dvh items-center overflow-hidden"
+    x-data="{
+		init() {
+			this.$nextTick(() => {
+				const tl = gsap.timeline({
+					scrollTrigger: {
+						trigger: this.$el,
+						start: 'top 50%',
+					}
+				});
+				tl.from([this.$refs.preheading, this.$refs.heading, this.$refs.description], {
+					opacity: 0,
+					y: 64,
+					ease: 'power4.inOut',
+					duration: 1.2,
+				})
+			})
+		}
+	}"
+  >
+    <div class="container text-center">
+      <div class="mx-auto flex max-w-[895px] flex-col items-center gap-[30px]">
+        <div class="flex flex-col gap-[12px]">
+          <h2 class="p1-mono" x-ref="preheading">Our focus</h2>
+          <h3 class="h2 uppercase" x-ref="heading">
+            Built on Sui. Shipped to the world.
+          </h3>
+        </div>
+        <p class="p3 md:p1 max-w-[305px] md:max-w-[550px]" x-ref="description">
+          Built with Sui, Walrus, Seal, Enoki, and Nautilus. We ship products across the
+          Mysten stack — for governments, institutions, and the builders coming next.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section
+    id="industries"
+    class="-mt-px min-h-dvh py-[40px] md:py-[100px]"
+    x-data="{
+		init() {
+			gsap.from(this.$refs.content, {
+				opacity: 0,
+				y: 80,
+				duration: 1.2,
+				ease: 'power4.inOut',
+				scrollTrigger: {
+					trigger: this.$el,
+					start: 'top 60%',
+				}
+			})
+		}
+	}"
+  >
+    <div
+      class="relative container"
+      x-ref="content"
+      x-data="{
+			links: [],
+			activeLink: null,
+			isMobile: false,
+			width: 0,
+			height: 0,
+			offsetLeft: 0,
+			offsetTop: 0,
+			animationFrameId: null,
+			animationStartTime: null,
+			animationDuration: 300,
+			updateDimensions(link) {
+				const list = this.$refs.list;
+				this.width = link.offsetWidth;
+				this.offsetLeft = list.offsetLeft + link.offsetLeft;
+				this.offsetTop = list.offsetTop + link.offsetTop + 30;
+				this.height = link.offsetHeight - 60;
+			},
+			animateUpdate(link) {
+				const now = Date.now();
+				const elapsed = now - this.animationStartTime;
+
+				this.updateDimensions(link);
+
+				if (elapsed < this.animationDuration) {
+					this.animationFrameId = requestAnimationFrame(() => this.animateUpdate(link));
+				} else {
+					this.animationFrameId = null;
+				}
+			},
+			setActive(index) {
+				this.activeLink = index - 1;
+
+				if (this.animationFrameId) {
+					cancelAnimationFrame(this.animationFrameId);
+				}
+
+				setTimeout(() => {
+					const link = this.links[this.activeLink];
+					if (link) {
+						this.animationStartTime = Date.now();
+						this.animateUpdate(link);
+					}
+				}, 200);
+			},
+			handleHover(index) {
+				if (!this.isMobile) {
+					this.setActive(index);
+				}
+			},
+			handleClick(index) {
+				if (this.activeLink === index - 1) {
+					this.clearActive();
+				} else {
+					this.setActive(index);
+				}
+			},
+			clearActive() {
+				this.activeLink = null;
+				if (this.animationFrameId) {
+					cancelAnimationFrame(this.animationFrameId);
+					this.animationFrameId = null;
+				}
+			},
+			handleMouseLeave() {
+				if (!this.isMobile) {
+					this.clearActive();
+				}
+			},
+			checkMobile() {
+				this.isMobile = window.innerWidth < 768;
+			},
+			init() {
+				this.$nextTick(() => {
+					this.links = this.$refs.list.querySelectorAll('li');
+					const list = this.$refs.list;
+					const firstLink = this.links[0];
+					this.width = firstLink.offsetWidth;
+					this.height = firstLink.offsetHeight;
+					this.offsetLeft	= list.offsetLeft + firstLink.offsetLeft;
+					this.offsetTop	= list.offsetTop + firstLink.offsetTop + 30;
+				});
+
+				this.checkMobile();
+				if (this.isMobile) {
+					this.setActive(1);
+				}
+			}
+		}"
+      @resize.window="checkMobile(); isMobile ? setActive(1) : clearActive()"
+    >
+      <ul class="relative isolate flex flex-col items-center text-center" x-ref="list">
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 0"
+          @mouseenter="handleHover(1)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(1)"
+            :aria-expanded="(activeLink === 0).toString()"
+            aria-controls="industry-content-1"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Advanced Mobility
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Advanced Mobility
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-1">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Autonomous aviation, smart transit, and sustainable transport reshaping
+              movement.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 1"
+          @mouseenter="handleHover(2)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(2)"
+            :aria-expanded="(activeLink === 1).toString()"
+            aria-controls="industry-content-2"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Artificial Intelligence
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Artificial Intelligence
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-2">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Transforming industries through data, automation, and intelligence at
+              scale.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 2"
+          @mouseenter="handleHover(3)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(3)"
+            :aria-expanded="(activeLink === 2).toString()"
+            aria-controls="industry-content-3"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Biotechnology &amp; Genomics
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Biotechnology &amp; Genomics
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-3">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Engineering breakthrough treatments and extending human potential through
+              genetic innovation.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 3"
+          @mouseenter="handleHover(4)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(4)"
+            :aria-expanded="(activeLink === 3).toString()"
+            aria-controls="industry-content-4"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Blockchain &amp; DeFi
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Blockchain &amp; DeFi
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-4">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Building transparent, secure digital economies that move faster than
+              convention.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 4"
+          @mouseenter="handleHover(5)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(5)"
+            :aria-expanded="(activeLink === 4).toString()"
+            aria-controls="industry-content-5"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Next-Gen Finance
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Next-Gen Finance
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-5">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Alternative investments to democratized financial intelligence for
+              everyone.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 5"
+          @mouseenter="handleHover(6)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(6)"
+            :aria-expanded="(activeLink === 5).toString()"
+            aria-controls="industry-content-6"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Next-Gen Consumer Tech
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Next-Gen Consumer Tech
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-6">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Hyper-personalized, cutting-edge technologies to enrich everyday lives.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 6"
+          @mouseenter="handleHover(7)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(7)"
+            :aria-expanded="(activeLink === 6).toString()"
+            aria-controls="industry-content-7"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Quantum Computing
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Quantum Computing
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-7">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              New paradigms in computing power, asset analysis, and fintech.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 7"
+          @mouseenter="handleHover(8)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(8)"
+            :aria-expanded="(activeLink === 7).toString()"
+            aria-controls="industry-content-8"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Robotics
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Robotics
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-8">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Augmenting human capability and automating the future of work.
+            </p>
+          </div>
+        </li>
+        <li
+          class="group grid grid-rows-[auto_0fr] px-[40px] py-[10px] text-center transition-[grid-template-rows,padding] duration-500 ease-(--easing) data-active:grid-rows-[auto_1fr] data-active:py-[60px] motion-reduce:duration-[0ms] md:py-0"
+          :data-active="activeLink === 8"
+          @mouseenter="handleHover(9)"
+          @mouseleave="handleMouseLeave()"
+        >
+          <button
+            class="relative isolate w-full overflow-hidden md:cursor-default"
+            @click="handleClick(9)"
+            :aria-expanded="(activeLink === 8).toString()"
+            aria-controls="industry-content-9"
+          >
+            <h3
+              class="h4 min-[360px]:h-vw uppercase transition-transform duration-500 ease-(--easing) group-data-active:-translate-y-full motion-reduce:duration-[0ms]"
+            >
+              Space
+            </h3>
+            <span
+              aria-hidden="true"
+              class="h4 min-[360px]:h-vw absolute inset-0 translate-y-full uppercase transition-transform duration-500 ease-(--easing) group-data-active:translate-y-0 motion-reduce:duration-[0ms]"
+            >
+              Space
+            </span>
+          </button>
+          <div class="flex justify-center overflow-hidden" id="industry-content-9">
+            <p
+              class="p2 max-w-[430px] pt-[4px] ease-(--easing) motion-reduce:duration-[0ms]"
+            >
+              Opening new frontiers in connectivity, exploration, and orbital
+              infrastructure.
+            </p>
+          </div>
+        </li>
+      </ul>
+      <div
+        class="pointer-events-none absolute top-0 left-0 h-full w-full transition-[width,left,top,height,opacity,transform,scale] duration-500 ease-(--easing) motion-reduce:hidden"
+        :class="activeLink !== null ? 'opacity-100 scale-100 blur-none' : 'opacity-0 scale-200 blur-[10px]'"
+        :style="`width: ${width}px; height: ${height}px; left: ${offsetLeft}px; top: ${offsetTop}px;`"
+      >
+        <svg
+          class="md:size-[32px] size-[20px] corner-accent text-pulse-ash ease-(--easing) duration-400"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="md:size-[32px] size-[20px] corner-accent text-pulse-ash ease-(--easing) duration-400"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="md:size-[32px] size-[20px] corner-accent text-pulse-ash ease-(--easing) duration-400"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+        <svg
+          class="md:size-[32px] size-[20px] corner-accent text-pulse-ash ease-(--easing) duration-400"
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+            stroke="currentColor"></path>
+        </svg>
+      </div>
+    </div>
+  </section>
+</div>

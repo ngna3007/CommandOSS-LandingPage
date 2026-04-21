@@ -1,0 +1,398 @@
+---
+---
+
+<section
+  class="bg-neural-fog text-rich-carbon overflow-hidden rounded-t-[20px] pt-[120px] pb-[200px] md:py-[220px]"
+  x-data="{
+		init() {
+			const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			if (prefersReducedMotion) return;
+
+			const tl = gsap.timeline({
+				scrollTrigger: {
+					trigger: this.$el,
+					start: 'top bottom-=10%',
+					end: 'top center',
+					scrub: 1,
+				}
+			});
+
+			tl.from(this.$el,
+				{
+					css: {
+						clipPath: 'inset(0 100% 0 0)'
+					},
+					duration: 1.2,
+				}
+			)
+		}
+	}"
+>
+  <div class="container" x-ref="content" id="ethos">
+    <div
+      class="mb-[40px] grid grid-cols-1 gap-x-[24px] gap-y-[24px] md:mb-[60px] md:grid-cols-2"
+    >
+      <div class="flex flex-col gap-[12px]">
+        <h2 class="p2-mono">Our ethos</h2>
+        <p class="h5 uppercase">
+          Vision matters.<br />
+          Velocity wins.
+        </p>
+      </div>
+      <div class="flex flex-col items-start">
+        <p class="p1 border-rich-carbon/20 mb-[24px] border-t pt-[20px] md:mb-[32px]">
+          CommandOSS is a co-located engineering team in Ho Chi Minh City. We work
+          directly with the Mysten Labs core team to ship products across the Mysten
+          stack.
+        </p>
+
+        <button
+          class="group/button hover:animate-glitch-hover relative isolate motion-reduce:hover:animate-none"
+          data-theme="dark"
+          aria-label=""
+          @click="$dispatch('contact-modal:open', '#contact')"
+          x-data
+        >
+          <div class="flex h-[40px] items-center justify-center px-[20px]">
+            <div
+              class="group-data-[theme=light]/button:bg-neural-fog group-data-[theme=dark]/button:bg-rich-carbon motion-reduce:blur-0 button--dot size-[10px] -translate-x-[24px] rounded-[3px] opacity-0 blur-[20px] transition-all duration-400 ease-(--easing) group-hover/button:-translate-x-[5px] group-hover/button:opacity-100 group-hover/button:blur-[0px] group-active/button:-translate-x-[5px] group-active/button:opacity-100 group-active/button:blur-[0px] motion-reduce:hidden motion-reduce:translate-x-0 motion-reduce:opacity-0 motion-reduce:group-hover/button:translate-x-0 motion-reduce:group-hover/button:opacity-0"
+            >
+            </div>
+            <div
+              class="p2-mono group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon relative isolate flex -translate-x-[5px] overflow-hidden transition-transform duration-400 ease-(--easing) group-hover/button:translate-x-[5px] group-active/button:translate-x-[5px] motion-reduce:translate-x-0 motion-reduce:group-hover/button:translate-x-0"
+            >
+              <span
+                class="transition-transform duration-400 ease-(--easing) group-hover/button:-translate-y-full group-active/button:-translate-y-full motion-reduce:translate-y-0 motion-reduce:group-hover/button:translate-y-0"
+              >
+                Join Us
+              </span>
+              <span
+                class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) group-hover/button:translate-y-0 group-active/button:translate-y-0 motion-reduce:hidden"
+                aria-hidden="true"
+              >
+                Join Us
+              </span>
+            </div>
+          </div>
+          <svg
+            class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+              stroke="currentColor"></path>
+          </svg>
+          <svg
+            class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+              stroke="currentColor"></path>
+          </svg>
+          <svg
+            class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+              stroke="currentColor"></path>
+          </svg>
+          <svg
+            class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+              stroke="currentColor"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <ul
+      class="group flex flex-col gap-[20px] md:flex-row md:gap-0"
+      id="ethos-cards"
+      x-data="{
+				activeCard: null,
+				init() {
+					const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+					if (prefersReducedMotion) return;
+
+					const mm = gsap.matchMedia();
+					mm.add('(max-width: 767px)', () => {
+						const cards = gsap.utils.toArray(this.$el.querySelectorAll('li'));
+						cards.forEach((card) => {
+							gsap.from(card, {
+								scrollTrigger: {
+									trigger: card,
+									start: 'top 50%',
+									end: 'bottom bottom',
+								},
+								clipPath: 'inset(0 0 100% 0)',
+								duration: 0.6,
+								ease: 'power3.inOut',
+							});
+						});
+					});
+				}
+			}"
+    >
+      <li
+        class="group/card w-full shrink-0 transition-[width] delay-100 duration-500 ease-(--easing) md:w-[25%] md:group-has-[li.-active]:w-[20%]"
+        :class="{ '-active md:w-[40%]!' : activeCard === 1 }"
+        @mouseenter="activeCard = 1"
+        @mouseleave="activeCard = null"
+      >
+        <div
+          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-rich-carbon text-neural-fog"
+          id="ethos-card-1"
+        >
+          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+            <div
+              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+            >
+              <button
+                class="hidden md:block"
+                @click="activeCard = 1"
+                :aria-expanded="(activeCard === 1).toString()"
+                :aria-controls="`ethos-card-1`"
+              >
+                <h3
+                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
+                  x-data="splitTextReveal()"
+                >
+                  Forged, not hired
+                </h3>
+              </button>
+              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
+                Forged, not hired
+              </h3>
+              <picture class="size-full max-h-[300px]">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 800w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="size-full object-contain object-center"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 400w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 600w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 900w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/exponential-foresight-icon.svg?dm=1763974077 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2985.07"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="p2-mono flex flex-col gap-[15px]">
+                <p>01 / 04</p>
+                <p class="text-pretty">
+                  Every engineer on the team has earned their seat by putting real work
+                  on-chain.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li
+        class="group/card w-full shrink-0 transition-[width] delay-100 duration-500 ease-(--easing) md:w-[25%] md:group-has-[li.-active]:w-[20%]"
+        :class="{ '-active md:w-[40%]!' : activeCard === 2 }"
+        @mouseenter="activeCard = 2"
+        @mouseleave="activeCard = null"
+      >
+        <div
+          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-electric-teal"
+          id="ethos-card-2"
+        >
+          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+            <div
+              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+            >
+              <button
+                class="hidden md:block"
+                @click="activeCard = 2"
+                :aria-expanded="(activeCard === 2).toString()"
+                :aria-controls="`ethos-card-2`"
+              >
+                <h3
+                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
+                  x-data="splitTextReveal()"
+                >
+                  Hacker-house velocity
+                </h3>
+              </button>
+              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
+                Hacker-house velocity
+              </h3>
+              <picture class="size-full max-h-[300px]">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 800w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="size-full object-contain object-center"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 400w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 600w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 900w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/full-stack-support-icon.svg?dm=1763974134 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2666.67"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="p2-mono flex flex-col gap-[15px]">
+                <p>02 / 04</p>
+                <p class="text-pretty">
+                  A co-located team in Ho Chi Minh City. Synchronous by default. Decisions
+                  made in the room, not across timezones.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li
+        class="group/card w-full shrink-0 transition-[width] delay-100 duration-500 ease-(--easing) md:w-[25%] md:group-has-[li.-active]:w-[20%]"
+        :class="{ '-active md:w-[40%]!' : activeCard === 3 }"
+        @mouseenter="activeCard = 3"
+        @mouseleave="activeCard = null"
+      >
+        <div
+          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-infrared"
+          id="ethos-card-3"
+        >
+          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+            <div
+              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+            >
+              <button
+                class="hidden md:block"
+                @click="activeCard = 3"
+                :aria-expanded="(activeCard === 3).toString()"
+                :aria-controls="`ethos-card-3`"
+              >
+                <h3
+                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
+                  x-data="splitTextReveal()"
+                >
+                  Direct Mysten collaboration
+                </h3>
+              </button>
+              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
+                Direct Mysten collaboration
+              </h3>
+              <picture class="size-full max-h-[300px]">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 800w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="size-full object-contain object-center"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 400w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 600w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 900w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/financial-support-icon.svg?dm=1763974167 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2247.19"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="p2-mono flex flex-col gap-[15px]">
+                <p>03 / 04</p>
+                <p class="text-pretty">
+                  We build alongside the Mysten Labs core team — the engineers and
+                  researchers who build Sui itself.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      <li
+        class="group/card w-full shrink-0 transition-[width] delay-100 duration-500 ease-(--easing) md:w-[25%] md:group-has-[li.-active]:w-[20%]"
+        :class="{ '-active md:w-[40%]!' : activeCard === 4 }"
+        @mouseenter="activeCard = 4"
+        @mouseleave="activeCard = null"
+      >
+        <div
+          class="relative h-full w-full overflow-hidden rounded-[20px] transition-all delay-100 duration-500 ease-(--easing) md:w-[125%] md:group-[.-active]/card:w-full bg-off-white"
+          id="ethos-card-4"
+        >
+          <div class="flex size-full justify-center pt-[40px] pb-[20px] md:py-[40px]">
+            <div
+              class="flex w-full flex-col items-center gap-[22px] px-[20px] text-center md:max-w-[300px] md:shrink-0 md:gap-[44px]"
+            >
+              <button
+                class="hidden md:block"
+                @click="activeCard = 4"
+                :aria-expanded="(activeCard === 4).toString()"
+                :aria-controls="`ethos-card-4`"
+              >
+                <h3
+                  class="md:h5 h4 mx-auto max-w-[290px] uppercase"
+                  x-data="splitTextReveal()"
+                >
+                  Open source by default
+                </h3>
+              </button>
+              <h3 class="h4 md:h5 mx-auto max-w-[290px] uppercase md:hidden">
+                Open source by default
+              </h3>
+              <picture class="size-full max-h-[300px]">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 800w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="size-full object-contain object-center"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 400w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 600w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 900w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/intelligent-iteration-icon.svg?dm=1763974129 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="3278.69"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <div class="p2-mono flex flex-col gap-[15px]">
+                <p>04 / 04</p>
+                <p class="text-pretty">
+                  We publish repositories, document architecture, and contribute tooling
+                  back to the Sui ecosystem.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>

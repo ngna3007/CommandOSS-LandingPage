@@ -1,0 +1,572 @@
+---
+---
+
+<div class="relative isolate overflow-hidden" id="investors-founders">
+  <div class="absolute inset-0 -z-1 size-full" x-data="investorsFounders">
+    <canvas x-ref="canvas" class="size-full"></canvas>
+  </div>
+
+  <section class="py-[120px] md:py-[200px]" id="investors-section">
+    <div class="container">
+      <div
+        class="mx-auto grid max-w-[1440px] grid-cols-12 items-start gap-x-[24px] gap-y-[40px]"
+      >
+        <div
+          class="col-span-12 flex flex-col items-start gap-[35px] md:col-span-5 xl:col-span-4"
+          x-data="{
+					init() {
+						const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+						if (prefersReducedMotion) return;
+
+						const mm = gsap.matchMedia();
+
+						mm.add('(min-width: 768px)', () => {
+							ScrollTrigger.create({
+								trigger: this.$el,
+								start: 'top 80px',
+								endTrigger: '#investors-cards',
+								end: 'bottom 50%',
+								pin: this.$el,
+								pinSpacing: false,
+								invalidateOnRefresh: true,
+							});
+						});
+					}
+				}"
+          data-lag="0.2"
+        >
+          <div
+            class="border-off-white/20 flex w-full flex-col gap-[15px] border-b pb-[15px]"
+          >
+            <h2 class="p2-mono">For Investors</h2>
+            <p class="h4 uppercase" x-data="splitTextReveal()">
+              Invest in tomorrow’s category creators.
+            </p>
+          </div>
+          <p class="p2-mono text-off-white/60">
+            Join our investor circle and gain pre-market access to ventures creating new
+            markets in AI, Biotech, blockchain and frontier tech.
+          </p>
+
+          <button
+            class="group/button hover:animate-glitch-hover relative isolate motion-reduce:hover:animate-none"
+            data-theme="light"
+            aria-label=""
+            @click="$dispatch('contact-modal:open', 'investor')"
+            x-data
+          >
+            <div class="flex h-[40px] items-center justify-center px-[20px]">
+              <div
+                class="group-data-[theme=light]/button:bg-neural-fog group-data-[theme=dark]/button:bg-rich-carbon motion-reduce:blur-0 button--dot size-[10px] -translate-x-[24px] rounded-[3px] opacity-0 blur-[20px] transition-all duration-400 ease-(--easing) group-hover/button:-translate-x-[5px] group-hover/button:opacity-100 group-hover/button:blur-[0px] group-active/button:-translate-x-[5px] group-active/button:opacity-100 group-active/button:blur-[0px] motion-reduce:hidden motion-reduce:translate-x-0 motion-reduce:opacity-0 motion-reduce:group-hover/button:translate-x-0 motion-reduce:group-hover/button:opacity-0"
+              >
+              </div>
+              <div
+                class="p2-mono group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon relative isolate flex -translate-x-[5px] overflow-hidden transition-transform duration-400 ease-(--easing) group-hover/button:translate-x-[5px] group-active/button:translate-x-[5px] motion-reduce:translate-x-0 motion-reduce:group-hover/button:translate-x-0"
+              >
+                <span
+                  class="transition-transform duration-400 ease-(--easing) group-hover/button:-translate-y-full group-active/button:-translate-y-full motion-reduce:translate-y-0 motion-reduce:group-hover/button:translate-y-0"
+                >
+                  Connect with us
+                </span>
+                <span
+                  class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) group-hover/button:translate-y-0 group-active/button:translate-y-0 motion-reduce:hidden"
+                  aria-hidden="true"
+                >
+                  Connect with us
+                </span>
+              </div>
+            </div>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div
+          class="col-span-12 flex flex-col gap-[20px] md:col-span-6 md:col-start-7"
+          id="investors-cards"
+          x-ref="cards"
+          x-data="{
+					init() {
+						const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+						if (prefersReducedMotion) return;
+
+						const mm = gsap.matchMedia();
+
+						// Overlapping cards for desktop (>768px wide and >666px tall)
+						mm.add('(min-width: 768px) and (min-height: 666px)', () => {
+							const cards = gsap.utils.toArray(this.$el.querySelectorAll('li'));
+							cards.forEach((card, index) => {
+								const topOffset = 80 + (80 * (index * 0.25));
+								ScrollTrigger.create({
+									trigger: card,
+									start: `top top+=${topOffset}`,
+									endTrigger: '#investors-section',
+									end: 'bottom bottom',
+									pin: true,
+									pinSpacing: false,
+									invalidateOnRefresh: true,
+								});
+							});
+						});
+
+						// Stacked cards with clip-path animation for everything else
+						mm.add('(max-width: 767px), (min-width: 768px) and (max-height: 665px)', () => {
+							const cards = gsap.utils.toArray(this.$el.querySelectorAll('li'));
+							cards.forEach((card) => {
+								gsap.from(card, {
+									scrollTrigger: {
+										trigger: card,
+										start: 'top 50%',
+										end: 'bottom bottom',
+									},
+									clipPath: 'inset(0 0 100% 0)',
+									duration: 0.6,
+									ease: 'power3.inOut',
+								});
+							});
+						});
+					}
+				}"
+        >
+          <div
+            class="bg-electric-teal text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[360px] text-balance uppercase">
+                Foresight that converts
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-1.svg?dm=1770905466 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2040.82"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">01</p>
+              </div>
+              <p class="md:pb p1">
+                Access to breakthrough companies before markets see them–backed by
+                networks that execute.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-infrared text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[360px] text-balance uppercase">
+                Vetted and supported
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-2.svg?dm=1770905477 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">02</p>
+              </div>
+              <p class="md:pb p1">
+                Four to seven ventures annually, each comprehensively evaluated and
+                backed with full infrastructure to scale.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-off-white text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[360px] text-balance uppercase">
+                Transparent and Accelerated.
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-3.svg?dm=1770905486 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">03</p>
+              </div>
+              <p class="md:pb p1">
+                Direct operator access, shared diligence, and portfolio companies build
+                to compress time to value.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="pb-[200px] md:pt-[300px] md:pb-[300px]" id="founders-section">
+    <div class="container" id="founders">
+      <div
+        class="mx-auto grid max-w-[1440px] grid-cols-12 items-start gap-x-[24px] gap-y-[40px]"
+      >
+        <div
+          class="order-2 col-span-12 flex flex-col gap-[20px] md:order-1 md:col-span-6"
+          id="founders-cards"
+          x-ref="cards"
+          x-data="{
+					init() {
+						const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+						if (prefersReducedMotion) return;
+
+						const mm = gsap.matchMedia();
+
+						// Overlapping cards for desktop (>768px wide and >666px tall)
+						mm.add('(min-width: 768px) and (min-height: 666px)', () => {
+							const cards = gsap.utils.toArray(this.$el.querySelectorAll('li'));
+							cards.forEach((card, index) => {
+								const topOffset = 80 + (80 * (index * 0.25));
+								ScrollTrigger.create({
+									trigger: card,
+									start: `top top+=${topOffset}`,
+									endTrigger: '#founders-section',
+									end: 'bottom bottom',
+									pin: true,
+									invalidateOnRefresh: true,
+								});
+							});
+						});
+
+						// Stacked cards with clip-path animation for everything else
+						mm.add('(max-width: 767px), (min-width: 768px) and (max-height: 665px)', () => {
+							const cards = gsap.utils.toArray(this.$el.querySelectorAll('li'));
+							cards.forEach((card) => {
+								gsap.from(card, {
+									scrollTrigger: {
+										trigger: card,
+										start: 'top 50%',
+										end: 'bottom bottom',
+									},
+									clipPath: 'inset(0 0 100% 0)',
+									duration: 0.6,
+									ease: 'power3.inOut',
+								});
+							});
+						});
+					}
+				}"
+        >
+          <div
+            class="bg-electric-teal text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[450px] text-balance uppercase">
+                Move at the speed of breakthrough.
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-4.svg?dm=1770905522 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">01</p>
+              </div>
+              <p class="md:pb p1">
+                Start building today with expert support, capital on demand, and market
+                focus.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-infrared text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[450px] text-balance uppercase">
+                Full-stack infrastructure, ready from day one.
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-5.svg?dm=1770905528 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="2040.82"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">02</p>
+              </div>
+              <p class="md:pb p1">
+                Launch-ready operations, lean teams, and founder salaries paid from the
+                start.
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-off-white text-rich-carbon flex aspect-[1.3/1] max-h-[500px] min-h-[300px] w-full max-w-[668px] flex-col justify-between gap-[32px] rounded-[20px] px-[20px] py-[40px] md:min-h-[500px] md:px-[40px] md:py-[60px]"
+          >
+            <div class="flex items-center justify-between gap-[32px]">
+              <h3 class="h6 min-[830px]:h5 max-w-[450px] text-balance uppercase">
+                Connections that move you forward.
+              </h3>
+              <picture class="size-[32px] md:size-[60px] shrink-0 object-contain">
+                <source
+                  media="(-webkit-min-device-pixel-ratio: 1.5)"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 1800w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 2400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 3000w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 4000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                />
+                <img
+                  class="h-full w-auto"
+                  src="https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533"
+                  srcset="https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 400w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 600w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 900w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 1200w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 1500w,https://worldquant-foundry.files.svdcdn.com/production/images/home-6.svg?dm=1770905533 2000w,"
+                  sizes="(min-width: 1400px) 1400px, calc(100vw - 32px)"
+                  width="2000"
+                  height="1960.78"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+            </div>
+            <div class="flex flex-col gap-[30px]">
+              <div class="border-rich-carbon/20 border-b pb-[9px]">
+                <p class="p1-mono">03</p>
+              </div>
+              <p class="md:pb p1">
+                Expert mentorship, committed customers, and a cohort that matches your
+                pace.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="order-1 col-span-12 flex flex-col items-start gap-[35px] md:order-2 md:col-span-5 md:col-start-8 xl:col-span-4 xl:col-start-9"
+          x-data="{
+					init() {
+						const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+						if (prefersReducedMotion) return;
+
+						const mm = gsap.matchMedia();
+
+						mm.add('(min-width: 768px)', () => {
+							ScrollTrigger.create({
+								trigger: this.$el,
+								start: 'top 80px',
+								endTrigger: '#founders-cards',
+								end: 'bottom 50%',
+								pin: this.$el,
+								pinSpacing: false,
+								invalidateOnRefresh: true,
+							});
+						});
+					}
+				}"
+          data-lag="0.2"
+        >
+          <div
+            class="border-off-white/20 flex w-full flex-col gap-[15px] border-b pb-[15px]"
+          >
+            <h2 class="p2-mono">Founders</h2>
+            <p class="h4 uppercase" x-data="splitTextReveal()">
+              Build fast, with zero friction and total focus.
+            </p>
+          </div>
+          <p class="p2-mono text-off-white/60">
+            Skip the noise and build with a launch-ready team, deep resources, and
+            immediate market access from day one.
+          </p>
+
+          <button
+            class="group/button hover:animate-glitch-hover relative isolate motion-reduce:hover:animate-none"
+            data-theme="light"
+            aria-label=""
+            @click="$dispatch('contact-modal:open', 'founder')"
+            x-data
+          >
+            <div class="flex h-[40px] items-center justify-center px-[20px]">
+              <div
+                class="group-data-[theme=light]/button:bg-neural-fog group-data-[theme=dark]/button:bg-rich-carbon motion-reduce:blur-0 button--dot size-[10px] -translate-x-[24px] rounded-[3px] opacity-0 blur-[20px] transition-all duration-400 ease-(--easing) group-hover/button:-translate-x-[5px] group-hover/button:opacity-100 group-hover/button:blur-[0px] group-active/button:-translate-x-[5px] group-active/button:opacity-100 group-active/button:blur-[0px] motion-reduce:hidden motion-reduce:translate-x-0 motion-reduce:opacity-0 motion-reduce:group-hover/button:translate-x-0 motion-reduce:group-hover/button:opacity-0"
+              >
+              </div>
+              <div
+                class="p2-mono group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon relative isolate flex -translate-x-[5px] overflow-hidden transition-transform duration-400 ease-(--easing) group-hover/button:translate-x-[5px] group-active/button:translate-x-[5px] motion-reduce:translate-x-0 motion-reduce:group-hover/button:translate-x-0"
+              >
+                <span
+                  class="transition-transform duration-400 ease-(--easing) group-hover/button:-translate-y-full group-active/button:-translate-y-full motion-reduce:translate-y-0 motion-reduce:group-hover/button:translate-y-0"
+                >
+                  Build with us
+                </span>
+                <span
+                  class="absolute inset-0 translate-y-full transition-transform duration-400 ease-(--easing) group-hover/button:translate-y-0 group-active/button:translate-y-0 motion-reduce:hidden"
+                  aria-hidden="true"
+                >
+                  Build with us
+                </span>
+              </div>
+            </div>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+            <svg
+              class="size-[9px] corner-accent transition-opacity ease-(--easing) duration-400 group-active/button:opacity-100 group-data-[theme=light]/button:text-neural-fog group-data-[theme=dark]/button:text-rich-carbon motion-reduce:opacity-100 motion-reduce:transition-none"
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.499951 0.199996L0.499952 9.2M0.199951 0.499995L9.19995 0.499995"
+                stroke="currentColor"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
