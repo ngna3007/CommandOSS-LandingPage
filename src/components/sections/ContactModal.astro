@@ -13,7 +13,7 @@
 		words: null,
 		init() {
 			const title = 'Ping CommandOSS.';
-			
+
 			this.words = title.split(' ');
 			this.$watch('open', (value) => {
 				if (value) {
@@ -31,6 +31,36 @@
 					radio.checked = true;
 				}
 			}
+		},
+		handleContactSubmit(e) {
+			const data = new FormData(e.target);
+			const get = (k) => (data.get(k) || '').toString().trim();
+			const role = get('fields[imA]');
+			const firstName = get('fields[aboutYou][firstName]');
+			const lastName = get('fields[aboutYou][lastName]');
+			const email = get('fields[aboutYou][emailAddress]');
+			const phone = get('fields[aboutYou][phone][number]');
+			const business = get('fields[business][businessName]');
+			const businessType = get('fields[business][typeOfBusiness]');
+			const message = get('fields[business][message]');
+
+			const fullName = [firstName, lastName].filter(Boolean).join(' ');
+			const subject = 'CommandOSS contact — ' + (fullName || 'New inquiry') + (role ? ' (' + role + ')' : '');
+			const nl = String.fromCharCode(10);
+			const body = [
+				'Role: ' + role,
+				'Name: ' + fullName,
+				'Email: ' + email,
+				'Phone: ' + phone,
+				'Business: ' + business,
+				'Type of business: ' + businessType,
+				'',
+				'Message:',
+				message,
+			].join(nl);
+
+			this.open = false;
+			window.location.href = 'mailto:contact@commandoss.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 		}
 	}"
   @contact-modal:open.window="openContactModal($event)"
@@ -83,29 +113,9 @@
           <form
             id="fui-contact-gxuiyq"
             class="fui-form fui-labels-above-input"
-            method="post"
-            enctype="multipart/form-data"
-            accept-charset="utf-8"
-            data-fui-form='{"formHashId":"fui-contact-gxuiyq","formId":586,"formHandle":"contact","registeredJs":[{"src":"https:\/\/www.worldquantfoundry.com\/cpresources\/7693493b\/js\/fields\/checkbox-radio.js?v=1771445336","module":"FormieCheckboxRadio"},{"src":"https:\/\/www.worldquantfoundry.com\/cpresources\/7693493b\/js\/fields\/phone-country.js?v=1771445336","module":"FormiePhoneCountry"}],"settings":{"submitMethod":"ajax","submitActionMessage":"<p>Thank you for reaching out. Our team will be in touch soon. <\/p>","submitActionMessageTimeout":null,"submitActionMessagePosition":"top-form","submitActionFormHide":false,"submitAction":"message","submitActionTab":null,"errorMessage":"<p>There was an error. Please try again.<\/p>","errorMessagePosition":"top-form","loadingIndicator":"spinner","loadingIndicatorText":null,"validationOnSubmit":true,"validationOnFocus":false,"scrollToTop":true,"hasMultiplePages":false,"pages":[{"id":1,"label":"Page 1","settings":{"submitButtonLabel":"Contact us","backButtonLabel":"Back","showBackButton":false,"saveButtonLabel":"Save","showSaveButton":false,"saveButtonStyle":"link","buttonsPosition":"left","cssClasses":"mt-[20px]","containerAttributes":[{"label":"","value":""}],"inputAttributes":[],"enableNextButtonConditions":false,"nextButtonConditions":[],"enablePageConditions":false,"pageConditions":[],"enableJsEvents":false,"jsGtmEventOptions":[]}}],"themeConfig":{"loading":{"class":"fui-loading"},"errorMessage":{"class":"fui-error-message"},"disabled":{"class":"fui-disabled"},"tabError":{"class":"fui-tab-error"},"tabActive":{"class":"fui-tab-active"},"tabComplete":{"class":"fui-tab-complete"},"successMessage":{"class":"fui-success-message"},"alert":{"class":"fui-alert"},"alertError":{"class":"fui-alert fui-alert-error fui-alert-top-form","role":"alert","data-fui-alert":true,"data-fui-alert-error":true},"alertSuccess":{"class":"fui-alert fui-alert-success fui-alert-top-form","role":"alert","data-fui-alert":true,"data-fui-alert-success":true},"page":{"id":"fui-contact-gxuiyq-p-1","class":"fui-page","data-index":"0","data-id":"1","data-fui-page":true},"progress":{"class":"fui-progress","data-fui-progress":true},"tab":{"class":"fui-tab"},"success":{"class":"fui-success"},"error":{"class":"fui-error-message"},"fieldContainerError":{"class":"fui-error"},"fieldInputError":{"class":"fui-error"},"fieldErrors":{"class":"fui-errors","data-field-error-messages":true},"fieldError":{"class":"fui-error-message","data-field-error-message":true}},"redirectUrl":"","currentPageId":1,"outputJsTheme":true,"enableUnloadWarning":true,"enableBackSubmission":true,"ajaxTimeout":10,"outputConsoleMessages":true,"baseActionUrl":"https:\/\/www.worldquantfoundry.com\/index.php\/actions","refreshTokenUrl":"https:\/\/www.worldquantfoundry.com\/index.php\/actions\/formie\/forms\/refresh-tokens?form=FORM_PLACEHOLDER","scriptAttributes":[]}}'
-            data-form-handle="contact"
-            data-form-submit-method="ajax"
-            data-form-submit-action="message"
-            data-loading-indicator="spinner"
+            @submit.prevent="handleContactSubmit($event)"
           >
-            <input
-              type="hidden"
-              name="CRAFT_CSRF_TOKEN"
-              value="bC37yI0hiiOHmm4vEbL5OT-5IEeJ326viWWA0Pbo22QbR9N2GEFErypaoaP0dORn1asYbkffu1BYj2Mrz7dYmrgUwbWwuOIKKGq7LH0LIeU="
-              autocomplete="off"
-            /><input type="hidden" name="action" value="formie/submissions/submit" /><input
-              type="hidden"
-              name="submitAction"
-              value="submit"
-            /><input type="hidden" name="handle" value="contact" /><input
-              type="hidden"
-              name="siteId"
-              value="1"
-            /><div class="fui-form-container">
+            <div class="fui-form-container">
               <div
                 id="fui-contact-gxuiyq-p-1"
                 class="fui-page"
@@ -476,7 +486,7 @@
                               >By checking this box I agree to the <a
                                 target="_blank"
                                 rel="noopener noreferrer nofollow"
-                                href="https://www.worldquantfoundry.com/legal/privacy-policy"
+                                href="https://commandoss.com/legal/privacy-policy"
                                 >privacy policy</a
                               ></label
                             >
@@ -485,13 +495,6 @@
                       </fieldset>
                     </div>
                   </div>
-                </div><div id="beesknees_5861_wrapper" style="display:none;">
-                  <label for="beesknees_5861">Leave this field blank</label><input
-                    type="text"
-                    id="beesknees_5861"
-                    name="beesknees"
-                    style="display:none;"
-                  />
                 </div><button
                   class="group/button hover:animate-glitch-hover relative isolate mt-[32px] w-full md:w-auto"
                   data-theme="dark"
@@ -555,14 +558,7 @@
                       stroke="currentColor"></path></svg
                   ></button
                 >
-              </div><script is:inline>
-                window.dynamicForms = window.dynamicForms || [];
-                window.dynamicForms.push({
-                  formHandle: "contact",
-                  parent: document.currentScript.parentElement,
-                  fields: [],
-                });
-              </script>
+              </div>
             </div>
           </form>
         </div>

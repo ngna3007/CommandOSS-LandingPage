@@ -122,11 +122,12 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
     <script is:inline src="/assets/gsap.min.js" defer></script>
     <script is:inline src="/assets/main.min.js" defer></script>
 
-    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-
-    <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#111111" />
-    <meta name="apple-mobile-web-app-title" content="WQF" />
+    <link rel="icon" type="image/svg+xml" href="/favicons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicons/favicon-96x96.png" />
+    <link rel="shortcut icon" href="/favicons/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicons/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="CommandOSS" />
     <meta name="application-name" content="CommandOSS" />
     <meta name="msapplication-TileColor" content="#111111" />
     <meta name="theme-color" content="#111111" />
@@ -162,40 +163,31 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
     <meta content="en" property="og:locale" />
     <meta content="CommandOSS" property="og:site_name" />
     <meta content="website" property="og:type" />
-    <meta content="https://www.worldquantfoundry.com/" property="og:url" />
+    <meta content="https://commandoss.com/" property="og:url" />
     <meta content="CommandOSS — Building on Sui at Full Speed" property="og:title" />
     <meta
       content="CommandOSS is Mysten Labs' engineering unit in Vietnam, shipping breakthrough open-source products on Sui — from zkLogin to robots."
       property="og:description"
     />
-    <meta
-      content="https://worldquant-foundry.transforms.svdcdn.com/production/images/cover-thumb.png?w=1200&h=630&q=82&auto=format&fit=crop&dm=1772196048&s=45c0b889b7c725a979fb24f1461954ed"
-      property="og:image"
-    />
+    <meta content="https://commandoss.com/assets/og-image.png" property="og:image" />
     <meta content="1200" property="og:image:width" />
     <meta content="630" property="og:image:height" />
     <meta content="CommandOSS logo" property="og:image:alt" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:creator" content="@" />
+    <meta name="twitter:creator" content="@0xCommandOSS" />
+    <meta name="twitter:site" content="@0xCommandOSS" />
     <meta name="twitter:title" content="CommandOSS — Building on Sui at Full Speed" />
     <meta
       name="twitter:description"
       content="CommandOSS is Mysten Labs' engineering unit in Vietnam, shipping breakthrough open-source products on Sui — from zkLogin to robots."
     />
-    <meta
-      name="twitter:image"
-      content="https://worldquant-foundry.transforms.svdcdn.com/production/images/cover-thumb.png?w=1200&h=630&q=82&auto=format&fit=crop&dm=1772196048&s=45c0b889b7c725a979fb24f1461954ed"
-    />
+    <meta name="twitter:image" content="https://commandoss.com/assets/og-image.png" />
     <meta name="twitter:image:width" content="1200" />
     <meta name="twitter:image:height" content="630" />
     <meta name="twitter:image:alt" content="CommandOSS logo" />
-    <link href="https://www.worldquantfoundry.com/" rel="canonical" />
-    <link href="https://www.worldquantfoundry.com/" rel="home" />
-    <link type="text/plain" href="https://www.worldquantfoundry.com/humans.txt" rel="author" />
-    <link
-      href="https://www.worldquantfoundry.com/cpresources/7693493b/css/fields/phone-country.css?v=1771445336"
-      rel="stylesheet"
-    />
+    <link href="https://commandoss.com/" rel="canonical" />
+    <link href="https://commandoss.com/" rel="home" />
+    <link rel="stylesheet" href="/assets/phone-country.css" />
   </head>
   <body class="bg-rich-carbon text-neural-fog font-roc-grotesk">
     <Loader />
@@ -309,40 +301,24 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
             "@type": "WebSite",
             "author": { "@id": "#identity" },
             "copyrightHolder": { "@id": "#identity" },
-            "copyrightYear": "2025",
-            "creator": { "@id": "https://serieseight.com#creator" },
-            "dateCreated": "2025-11-13T04:48:53-08:00",
-            "dateModified": "2026-03-24T03:52:22-07:00",
-            "datePublished": "2025-11-13T04:48:00-08:00",
-            "description": "WorldQuant Foundry is a venture studio focused on exponential technologies that define industries. Discover how to invest, build or partner with us today.",
-            "headline": "Forging Companies that Pull the Future Forward | WorldQuant Foundry",
+            "copyrightYear": "2026",
+            "description": "CommandOSS is Mysten Labs' engineering unit in Vietnam, shipping breakthrough open-source products on Sui — from zkLogin to robots.",
+            "headline": "CommandOSS — Building on Sui at Full Speed",
             "image": {
               "@type": "ImageObject",
-              "url": "https://worldquant-foundry.transforms.svdcdn.com/production/images/cover-thumb.png?w=1200&h=630&q=82&auto=format&fit=crop&dm=1772196048&s=45c0b889b7c725a979fb24f1461954ed"
+              "url": "https://commandoss.com/assets/og-image.png"
             },
             "inLanguage": "en",
-            "mainEntityOfPage": "https://www.worldquantfoundry.com/",
-            "name": "WorldQuant Foundry",
-            "publisher": { "@id": "https://serieseight.com#creator" },
-            "url": "https://www.worldquantfoundry.com/"
+            "mainEntityOfPage": "https://commandoss.com/",
+            "name": "CommandOSS",
+            "url": "https://commandoss.com/"
           },
-          { "@id": "#identity", "@type": "Organization" },
           {
-            "@id": "https://serieseight.com#creator",
+            "@id": "#identity",
             "@type": "Organization",
-            "alternateName": "S8",
-            "description": "We’re a remote digital agency that creates award-winning websites, brands and e-commerce stores - for people.",
-            "email": "info@serieseight.com",
-            "founder": "Mario Vassiliades",
-            "foundingDate": "2024-11-01",
-            "image": {
-              "@type": "ImageObject",
-              "height": "512",
-              "url": "https://serieseight.com/android-chrome-512x512.png",
-              "width": "512"
-            },
-            "name": "Series Eight",
-            "url": "https://serieseight.com"
+            "name": "CommandOSS",
+            "url": "https://commandoss.com/",
+            "sameAs": ["https://twitter.com/0xCommandOSS"]
           },
           {
             "@type": "BreadcrumbList",
@@ -350,7 +326,7 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
             "itemListElement": [
               {
                 "@type": "ListItem",
-                "item": "https://www.worldquantfoundry.com/",
+                "item": "https://commandoss.com/",
                 "name": "Home",
                 "position": 1
               }
@@ -359,15 +335,6 @@ import SiteFooter from "../components/sections/SiteFooter.astro";
           }
         ]
       }
-    </script><script
-      is:inline
-      type="text/javascript"
-      src="https://www.worldquantfoundry.com/cpresources/7693493b/js/formie.js?v=1771445336"
-      defer
-      data-bypass-observer></script>
-    <script
-      is:inline
-      src="https://www.worldquantfoundry.com/cpresources/202ff2ee/cache-helper.js?v=1775638899"
-      defer></script>
+    </script>
   </body>
 </html>
